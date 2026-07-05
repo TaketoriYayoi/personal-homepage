@@ -175,7 +175,7 @@
                             <div v-if="project.ribbon" class="project-ribbon">{{ project.ribbon }}</div>
                             <div v-if="project.img" class="project-banner"
                                 @click="openLightbox(project.img, project.title)">
-                                <img :src="project.img" :alt="project.title" class="project-banner-img">
+                                <img :src="project.img" :alt="project.title" class="project-banner-img" loading="lazy">
                                 <div class="project-banner-zoom"><i class="ri-zoom-in-line"></i></div>
                             </div>
                             <div class="project-header">
@@ -216,7 +216,7 @@
                             <h3>{{ item.title }}</h3>
                             <p v-if="item.desc">{{ item.desc }}</p>
                             <div v-if="item.img" class="card-thumb" @click="openLightbox(item.img, item.title)">
-                                <img :src="item.img" :alt="item.title">
+                                <img :src="item.img" :alt="item.title" loading="lazy">
                                 <div class="card-thumb-zoom"><i class="ri-zoom-in-line"></i></div>
                             </div>
                         </div>
@@ -241,7 +241,7 @@
                                     <li v-for="pt in item.items" :key="pt">{{ pt }}</li>
                                 </ul>
                                 <div v-if="item.img" class="card-thumb" @click="openLightbox(item.img, item.role)">
-                                    <img :src="item.img" :alt="item.role">
+                                    <img :src="item.img" :alt="item.role" loading="lazy">
                                     <div class="card-thumb-zoom"><i class="ri-zoom-in-line"></i></div>
                                 </div>
                             </div>
@@ -265,7 +265,7 @@
                                 <h3>{{ item.title }}</h3>
                                 <p class="timeline-desc" v-if="item.desc">{{ item.desc }}</p>
                                 <div v-if="item.img" class="card-thumb" @click="openLightbox(item.img, item.title)">
-                                    <img :src="item.img" :alt="item.title">
+                                    <img :src="item.img" :alt="item.title" loading="lazy">
                                     <div class="card-thumb-zoom"><i class="ri-zoom-in-line"></i></div>
                                 </div>
                             </div>
