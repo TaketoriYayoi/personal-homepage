@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>尹梓骏 | Zijun Yin</title>
+    <meta name="description" content="同济大学启迪书院工学学士在读，专注机器学习与AI算法研究">
+    <meta name="keywords" content="机器学习,AI算法,遥感,同济大学,尹梓骏">
+    <meta name="theme-color" content="#f5f4f0">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎓</text></svg>">
+    <link rel="stylesheet" href="static/css/index.css">
+    <link rel="stylesheet" href="static/fonts/remixicon.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Lora:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Noto+Serif+SC:wght@400;600;700&family=Noto+Sans+SC:wght@400;500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div id="app">
+        <canvas id="particles"></canvas>
+        <div class="glow-orb orb-1"></div>
+        <div class="glow-orb orb-2"></div>
+        <div class="parallax-geo geo-1"></div>
+        <div class="parallax-geo geo-2"></div>
+        <div class="parallax-geo geo-3"></div>
+
+        <div class="app-container">
+            <!-- 导航栏 -->
+            <nav class="navbar">
+                <img src="同济+启迪.png" class="nav-logo" alt="同济大学启迪书院">
+                <div class="nav-brand">&lt;/&gt; {{ site.name }}</div>
+                <div class="nav-links">
+                    <a v-for="link in navLinks" :key="link.id" :href="'#' + link.id" :class="{ active: activeSection === link.id }">{{ link.label }}</a>
+                </div>
+                <div class="lang-switcher">
+                    <button @click="setLang('zh')" :class="{ active: currentLang === 'zh' }">中文</button>
+                    <span class="lang-sep">|</span>
+                    <button @click="setLang('en')" :class="{ active: currentLang === 'en' }">English</button>
+                    <span class="lang-sep">|</span>
+                    <button @click="setLang('ja')" :class="{ active: currentLang === 'ja' }">日本語</button>
+                </div>
+                <button class="theme-toggle" @click="toggleDark" :title="isDark ? '切换亮色' : '切换暗色'">
+                    <i :class="isDark ? 'ri-sun-line' : 'ri-moon-line'"></i>
+                </button>
+                <div class="scroll-progress" :style="{ width: scrollProgress + '%' }"></div>
+            </nav>
+
+            <!-- Hero -->
+            <header class="hero">
+                <div class="hero-content">
+                    <div class="hero-photo-wrap">
+                        <div class="photo-halo"></div>
+                        <div class="photo-corner-badge">同济 TJ</div>
+                        <img src="static/img/yinzijun.jpg" alt="尹梓骏" class="hero-photo">
+                    </div>
+                    <div class="hero-text">
+                        <div class="hero-label">{{ t.heroLabel }}</div>
+                        <h1 class="title">
+                            <span class="title-text">{{ typedText }}</span><span class="cursor">|</span>
+                        </h1>
+                        <p class="bio">{{ t.bio }}</p>
+                        <div class="hero-stats">
+                            <div class="hero-stat">
+                                <span class="hero-stat-num">{{ statAwards }}<span class="stat-suffix">+</span></span>
+                                <span class="hero-stat-label">{{ t.stats.awards }}</span>
+                            </div>
+                            <div class="hero-stat-divider"></div>
+                            <div class="hero-stat">
+                                <span class="hero-stat-num">{{ statProjects }}<span class="stat-suffix">+</span></span>
+                                <span class="hero-stat-label">{{ t.stats.projects }}</span>
+                            </div>
+                            <div class="hero-stat-divider"></div>
+                            <div class="hero-stat">
+                                <span class="hero-stat-num">{{ statVolunteer }}<span class="stat-suffix">h+</span></span>
+                                <span class="hero-stat-label">{{ t.stats.volunteer }}</span>
+                            </div>
+                        </div>
+                        <div class="social-links">
+                            <a v-for="social in socialLinks" :key="social.name" :href="social.url"
+                                :target="social.url.startsWith('http') ? '_blank' : '_self'"
+                                class="social-link" :title="social.name">
+                                <i :class="social.icon"></i>
+                            </a>
+                            <span class="mbti-badge" title="Myers–Briggs Type Indicator">INFJ-T</span>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <main class="main-content">
+                <!-- About -->
+                <section id="about" class="section" :class="{ visible: visibleSections.about }">
+                    <div class="section-header" data-label="ABOUT">
+                        <i class="ri-user-star-line"></i>
+                        <h2>{{ t.sections.about }}</h2>
+                        <span class="section-line"></span>
+                    </div>
+                    <div class="about-intro">
+                        <p>{{ t.aboutIntro }}</p>
+                    </div>
+                    <div class="about-grid">
+                        <div v-for="card in t.aboutCards" :key="card.title" class="about-card">
+                            <div class="about-icon"><i :class="card.icon"></i></div>
+                            <h3>{{ card.title }}</h3>
+                            <p>{{ card.desc }}</p>
+                        </div>
+                    </div>
+                    <div class="quote-box">
+                        <i class="ri-double-quotes-l"></i>
+                        <p>{{ t.quote }}</p>
+                    </div>
+                </section>
+
+                <!-- Education -->
+                <section id="education" class="section" :class="{ visible: visibleSections.education }">
+                    <div class="section-header" data-label="EDUCATION">
+                        <i class="ri-graduation-cap-line"></i>
+                        <h2>{{ t.sections.education }}</h2>
+                        <span class="section-line"></span>
+                    </div>
+                    <div class="timeline">
+                        <div v-for="(item, index) in t.education" :key="index" class="timeline-item">
+                            <div class="timeline-dot"></div>
+                            <div class="timeline-content">
+                                <div class="timeline-date">{{ item.date }}</div>
+                                <h3>{{ item.school }}</h3>
+                                <p class="timeline-company">{{ item.degree }}</p>
+                                <p class="timeline-desc">{{ item.desc }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Skills -->
+                <section id="skills" class="section" :class="{ visible: visibleSections.skills }">
+                    <div class="section-header" data-label="SKILLS">
+                        <i class="ri-terminal-box-line"></i>
+                        <h2>{{ t.sections.skills }}</h2>
+                        <span class="section-line"></span>
+                    </div>
+                    <div class="skills-grid">
+                        <div v-for="group in t.skills" :key="group.category" class="skill-group-card">
+                            <div class="skill-group-header">
+                                <i :class="group.icon"></i>
+                                <span>{{ group.category }}</span>
+                            </div>
+                            <div class="skill-tags" :class="{ 'has-bars': typeof group.items[0] === 'object' }">
+                                <template v-if="typeof group.items[0] === 'object'">
+                                    <div v-for="item in group.items" :key="item.name" class="skill-bar-row">
+                                        <span class="skill-bar-name">{{ item.name }}</span>
+                                        <div class="skill-bar-track">
+                                            <div class="skill-bar-fill" :style="{ width: skillsVisible ? item.level + '%' : '0%' }"></div>
+                                        </div>
+                                        <span class="skill-bar-pct">{{ item.level }}%</span>
+                                    </div>
+                                </template>
+                                <template v-else>
+                                    <span v-for="item in group.items" :key="item">{{ item }}</span>
+                                </template>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Research -->
+                <section id="projects" class="section" :class="{ visible: visibleSections.projects }">
+                    <div class="section-header" data-label="PROJECTS">
+                        <i class="ri-microscope-line"></i>
+                        <h2>{{ t.sections.projects }}</h2>
+                        <span class="section-line"></span>
+                    </div>
+                    <div class="projects-grid">
+                        <div v-for="project in t.projects" :key="project.title" class="project-card">
+                            <div v-if="project.ribbon" class="project-ribbon">{{ project.ribbon }}</div>
+                            <div v-if="project.img" class="project-banner"
+                                @click="openLightbox(project.img, project.title)">
+                                <img :src="project.img" :alt="project.title" class="project-banner-img">
+                                <div class="project-banner-zoom"><i class="ri-zoom-in-line"></i></div>
+                            </div>
+                            <div class="project-header">
+                                <i :class="project.icon"></i>
+                                <h3>{{ project.title }}</h3>
+                            </div>
+                            <p class="project-desc" :class="{ expanded: expandedProjects.has(project.title) }">{{ project.desc }}</p>
+                            <button class="project-expand-btn" @click="toggleProject(project.title)">
+                                {{ expandedProjects.has(project.title) ? t.collapse : t.expand }}
+                            </button>
+                            <div class="project-tags">
+                                <span v-for="tag in project.tags" :key="tag">{{ tag }}</span>
+                            </div>
+                            <div class="project-metrics">
+                                <div v-for="metric in project.metrics" :key="metric.label" class="metric">
+                                    <span class="metric-value">{{ metric.value }}</span>
+                                    <span class="metric-label">{{ metric.label }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Awards -->
+                <section id="awards" class="section" :class="{ visible: visibleSections.awards }">
+                    <div class="section-header" data-label="AWARDS">
+                        <i class="ri-trophy-line"></i>
+                        <h2>{{ t.sections.awards }}</h2>
+                        <span class="section-line"></span>
+                    </div>
+                    <div class="awards-feed">
+                        <div v-for="(item, index) in t.awards" :key="index" class="award-card" :class="awardTier(item.tier)">
+                            <div v-if="item.ribbon" class="project-ribbon">{{ item.ribbon }}</div>
+                            <div style="display:flex;align-items:center;gap:0.55rem;margin-bottom:0.45rem;">
+                                <i :class="['ri-' + awardIcon(item.tier), awardIconClass(item.tier)]" style="font-size:1.1rem;flex-shrink:0;"></i>
+                                <span class="award-date">{{ item.date }}</span>
+                            </div>
+                            <h3>{{ item.title }}</h3>
+                            <p v-if="item.desc">{{ item.desc }}</p>
+                            <div v-if="item.img" class="card-thumb" @click="openLightbox(item.img, item.title)">
+                                <img :src="item.img" :alt="item.title">
+                                <div class="card-thumb-zoom"><i class="ri-zoom-in-line"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Student Work -->
+                <section id="student-work" class="section" :class="{ visible: visibleSections['student-work'] }">
+                    <div class="section-header" data-label="ACTIVITIES">
+                        <i class="ri-team-line"></i>
+                        <h2>{{ t.sections.activities }}</h2>
+                        <span class="section-line"></span>
+                    </div>
+                    <div class="timeline">
+                        <div v-for="(item, index) in t.studentWork" :key="index" class="timeline-item">
+                            <div class="timeline-dot"></div>
+                            <div class="timeline-content">
+                                <div class="timeline-date">{{ item.date }}</div>
+                                <h3>{{ item.role }}</h3>
+                                <p class="timeline-company">{{ item.org }}</p>
+                                <ul class="timeline-list">
+                                    <li v-for="pt in item.items" :key="pt">{{ pt }}</li>
+                                </ul>
+                                <div v-if="item.img" class="card-thumb" @click="openLightbox(item.img, item.role)">
+                                    <img :src="item.img" :alt="item.role">
+                                    <div class="card-thumb-zoom"><i class="ri-zoom-in-line"></i></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Volunteer -->
+                <section id="volunteer" class="section" :class="{ visible: visibleSections.volunteer }">
+                    <div class="section-header" data-label="VOLUNTEER">
+                        <i class="ri-heart-2-line"></i>
+                        <h2>{{ t.sections.volunteer }}</h2>
+                        <span class="section-line"></span>
+                    </div>
+                    <p class="volunteer-note">{{ t.volunteerNote }}</p>
+                    <div class="timeline">
+                        <div v-for="(item, index) in t.volunteer" :key="index" class="timeline-item">
+                            <div class="timeline-dot"></div>
+                            <div class="timeline-content">
+                                <div class="timeline-date">{{ item.date }}</div>
+                                <h3>{{ item.title }}</h3>
+                                <p class="timeline-desc" v-if="item.desc">{{ item.desc }}</p>
+                                <div v-if="item.img" class="card-thumb" @click="openLightbox(item.img, item.title)">
+                                    <img :src="item.img" :alt="item.title">
+                                    <div class="card-thumb-zoom"><i class="ri-zoom-in-line"></i></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </main>
+
+            <!-- Footer -->
+            <footer id="contact" class="footer">
+                <div class="footer-content">
+                    <div class="footer-info">
+                        <h3>{{ site.name }}</h3>
+                        <p>{{ t.footerSlogan }}</p>
+                    </div>
+                    <div class="footer-contact">
+                        <h4>{{ t.connect }}</h4>
+                        <div class="contact-items">
+                            <a v-for="social in socialLinks" :key="social.name" :href="social.url" target="_blank">
+                                <i :class="social.icon"></i> {{ social.name }}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="footer-bottom">
+                    <p class="copyright-main">&copy; 2025 - {{ currentYear }} 尹梓骏 · Zijun Yin · All Rights Reserved</p>
+                    <p class="copyright-sub">
+                        <span>Powered by Vue 3</span>
+                        <span class="divider">|</span>
+                        <span><a href="https://github.com/TaketoriYayoi" target="_blank">GitHub</a></span>
+                        <span class="divider">|</span>
+                        <span>Made with <i class="ri-heart-fill"></i> in China</span>
+                    </p>
+                </div>
+            </footer>
+        </div>
+
+        <!-- Lightbox -->
+        <div v-if="lightboxImg" class="lightbox-overlay" @click.self="closeLightbox">
+            <button class="lightbox-close" @click="closeLightbox"><i class="ri-close-line"></i></button>
+            <img :src="lightboxImg" :alt="lightboxAlt" class="lightbox-img">
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+    <script>
+        const { createApp, ref, reactive, onMounted, computed, watch } = Vue;
+
+        createApp({
+            setup() {
+                // ===== 站点配置 =====
+                const site = reactive({
+                    name: '尹梓骏',
+                    slogan: '同济大学 · 启迪书院 · 本科在读'
+                });
+
+                // ===== 导航链接 =====
+                const navLinks = ref([
+                    { id: 'about',        label: 'About' },
+                    { id: 'education',    label: 'Education' },
+                    { id: 'skills',       label: 'Skills' },
+                    { id: 'projects',     label: 'Research' },
+                    { id: 'student-work', label: 'Activities' },
+                    { id: 'awards',       label: 'Awards' },
+                    { id: 'volunteer',    label: 'Volunteer' },
+                    { id: 'contact',      label: 'Contact' }
+                ]);
+
+                // ===== 社交链接 =====
+                const socialLinks = ref([
+                    { name: 'Email', icon: 'ri-mail-fill', url: 'mailto:anyyzj511815@163.com' },
+                    { name: 'Work Email', icon: 'ri-mail-send-fill', url: 'mailto:2552840@tongji.edu.cn' },
+                    { name: 'GitHub', icon: 'ri-github-fill', url: 'https://github.com/TaketoriYayoi' },
+                    { name: 'Phone: +86 152-4507-2783', icon: 'ri-phone-fill', url: 'tel:+8615245072783' },
+                    { name: 'WeChat: Baili_an_apr12', icon: 'ri-wechat-fill', url: '#' },
+                    { name: 'QQ: 2470177450', icon: 'ri-qq-fill', url: 'https://wpa.qq.com/msgrd?v=3&uin=2470177450&site=qq&menu=yes' }
+                ]);
+
+                // ===== i18n 翻译数据 =====
+                const i18n = {
+                    zh: {
+                        heroLabel: '同济大学 · 启迪书院 · 2025 级',
+                        bio: '一个试图把什么都做得好一些的普通人',
+                        stats: { awards: '荣誉\n奖励', projects: '科研 &\n竞赛项目', volunteer: '志愿\n服务时长' },
+                        footerSlogan: '同济大学 · 启迪书院 · 本科在读',
+                        connect: 'Connect',
+                        volunteerNote: '累计志愿时长 60h+',
+                        expand: '展开全文 ▾',
+                        collapse: '收起 ▴',
+                        viewCert: '查看证书',
+                        quote: '世界很吵，我需要安静一会儿。',
+                        sections: {
+                            about: 'About Me', education: 'Education', skills: 'Skills',
+                            projects: 'Research & Projects', awards: 'Awards & Honors',
+                            activities: 'Student Activities', volunteer: 'Volunteer Work'
+                        },
+                        nav: ['About','Education','Skills','Research','Activities','Awards','Volunteer','Contact'],
+                        aboutIntro: '同济大学启迪书院 2025 级学生，兴趣横跨机器学习、遥感数据分析、数学建模与网络安全，热衷于用代码和模型解决真实世界的复杂问题。课余喜欢跑步出汗、临帖练字，或是戴上耳机在音乐里发呆。',
+                        aboutCards: [
+                            { icon: 'ri-brain-line', title: '机器学习', desc: 'Python, TensorFlow, Scikit-learn；擅长构建预测模型与特征工程' },
+                            { icon: 'ri-earth-line', title: '遥感数据分析', desc: '融合 CMFD、GPM、MODIS、SMAP 等多源遥感变量，嵌入水文物理过程' },
+                            { icon: 'ri-code-s-slash-line', title: '编程能力', desc: 'Python, C++, C, JavaScript, MATLAB, PHP；熟悉 Django, Node.js, MySQL' },
+                            { icon: 'ri-shield-keyhole-line', title: '网络安全', desc: 'CTF 竞赛爱好者；CyberGame 2026 全球前 4%，CatCTF 二等奖' },
+                            { icon: 'ri-bar-chart-box-line', title: '数学建模', desc: 'Mathorcup 2026 D题全国一等奖，独立完成，为同济大学本科生组唯一' },
+                            { icon: 'ri-translate-2', title: '多语言能力', desc: 'CET-4 646分；法语 B1；日语 N3；同济英语评估 Half-exempt（最高级）' }
+                        ],
+                        education: [
+                            { date: '2025 — 至今', school: '同济大学', degree: '本科在读 · 启迪书院 · 上海，中国', desc: 'GPA 4.72/5（秋，top 7%），4.48/5（春，top 21%）｜主要课程：高级语言程序设计（卓）(A)、线性代数荣誉课程 (A)、普通物理（卓）(A)、普通化学（卓）(A)、工程智能基础 (A)' },
+                            { date: '2022 — 2025', school: '哈尔滨市第九中学', degree: '毕业生 · 高中学历 · 哈尔滨，中国', desc: '高考成绩 659/750（top 0.3%）｜英语 143/150、数学 129/150、物理 88/100、化学 92/100、生物 92/100' }
+                        ],
+                        skills: [
+                            { category: '编程语言', icon: 'ri-code-s-slash-line', items: [{ name: 'Python', level: 88 }, { name: 'C++', level: 78 }, { name: 'C', level: 65 }, { name: 'JavaScript', level: 60 }, { name: 'MATLAB', level: 55 }, { name: 'PHP', level: 42 }] },
+                            { category: '框架与数据库', icon: 'ri-stack-line', items: [{ name: 'TensorFlow', level: 78 }, { name: 'Scikit-learn', level: 82 }, { name: 'Django', level: 58 }, { name: 'Node.js', level: 55 }, { name: 'MySQL', level: 60 }] },
+                            { category: '工具与平台', icon: 'ri-tools-line', items: [{ name: 'Git', level: 85 }, { name: 'Linux / Bash', level: 70 }, { name: 'VS Code', level: 90 }, { name: 'PyCharm', level: 75 }, { name: 'Jupyter', level: 80 }, { name: 'MS Office', level: 65 }] },
+                            { category: '英语能力', icon: 'ri-chat-1-line', items: ['CET-4: 646/710', '高考英语: 143/150', '同济英语评估: Half-exempt（最高级）'] },
+                            { category: '其他外语', icon: 'ri-global-line', items: ['法语 B1（线上测试）', '日语 N3（线上测试）'] }
+                        ],
+                        awards: [
+                            { date: 'Jun. 2026', ribbon: 'MIT', title: 'NEOSCHOLAR 国际化拔尖创新人才培养计划 — 二阶段入围', desc: '通过递交申请材料并与 MIT Prof. Gunther Roland 沟通，成功入围跨国课题组，在导师指导下独立完成课题科研任务；组内综合成绩第一', tier: 'gold', img: 'pics/NEOSCHOLAR二阶段入围.jpg' },
+                            { date: 'May 2026', ribbon: '全国', title: '"词达人杯"全国大学生英语词汇能力大赛', desc: '校赛 Top 15%', tier: '', img: 'pics/词达人.jpg' },
+                            { date: 'May 2026', ribbon: '外研社', title: '"外研社·国才杯""理解当代中国"外语能力公开赛 — 二等奖', desc: '', tier: 'silver', img: 'pics/理解当代中国.jpg' },
+                            { date: 'Apr. 2026', ribbon: '全国一等', title: 'Mathorcup 数学建模大赛（D题）— 全国一等奖', desc: '独立完成全部工作，为同济大学本科生组唯一', tier: 'gold', img: 'pics/mathorcup.png' },
+                            { date: 'Apr. 2026', ribbon: '全球4%', title: 'CyberGame 2026 全球性网络安全挑战赛', desc: '有效成绩参赛者中全球排名前 4%', tier: 'gold', img: 'pics/CyberGame2026-PlayerCertificate-en-Bailian.png' },
+                            { date: 'Apr. 2026', ribbon: '青马工程', title: '同济大学第九届青马工程"殷夫班"', desc: '启迪书院唯一被推荐人、唯一大一候选人', tier: '', img: 'pics/殷夫班.jpg' },
+                            { date: 'Apr. 2026', ribbon: '国家三等', title: '全国大学生英语竞赛（C类）— 国家级三等奖', desc: '128/150 分', tier: '', img: 'pics/大学生英语竞赛.jpg' },
+                            { date: 'Apr. 2026', ribbon: '全球30%', title: 'UMassCTF 2026 网络安全大赛', desc: 'Top 30%', tier: '', img: 'pics/UMASSCTF.png' },
+                            { date: 'Dec. 2025', ribbon: '同济二等', title: '首届同济大学大学生物理学术竞赛 — 二等奖', desc: '作为答辩人获同组最高分（6.875/10），复赛队伍总第4名', tier: 'silver', img: 'pics/同济大学物理学术竞赛.jpg' },
+                            { date: 'Oct. 2025', ribbon: '同济二等', title: 'CatCTF 同济大学网络安全大赛 — 二等奖', desc: '', tier: 'silver', img: 'pics/CatCTF网络安全新生赛.jpg' },
+                            { date: 'Sep. 2025', ribbon: '媒体报道', title: '光明日报《教育家》杂志 2025 年 9 月刊第四期', desc: '受采访并发表《一次先修课的"疗愈记"》', tier: '', img: 'pics/教育家杂志.png' },
+                            { date: 'Sep. 2025', ribbon: '优秀志愿', title: '同济大学迎新晚会 — 优秀志愿者', desc: '"济艺星火耀新程"2025年同济大学艺术节开幕式暨迎新生文艺晚会，志愿服务表现优异', tier: '', img: 'pics/同济大学迎新晚会优秀志愿者.jpg' },
+                            { date: 'Jun. 2025', ribbon: '646分', title: '大学英语四级（CET-4）— 646/710', desc: '', tier: '', img: 'pics/四级成绩单.jpg' }
+                        ],
+                        projects: [
+                            { icon: 'ri-map-2-line', img: 'pics/基于多源遥感数据的干旱时空预测.png', ribbon: '省部级', title: '基于多源遥感数据的干旱时空预测', desc: '提出物理驱动层次时空图神经网络 HieroST-PGNN 与自适配干旱指数 PMEDI，融合降水、温度、土壤湿度、蒸散发、植被指数、地下水异常等多源遥感变量（CMFD、GPM、MODIS、SMAP），将水文物理过程嵌入深度学习框架。采用 FFT 频域注意力机制与分层节点采样，综合水量平衡、大气蒸发需求、根区土壤水及地下水等多水文要素，引入气候区差异化权重自主学习。基于 2000—2023 年长序列数据实验：RMSE=0.967，CRPS=0.488，90% 置信区间覆盖率 93.1%，9 大气候区预测与实测高度吻合，预测精度与可靠性均优于 LSTM、ConvLSTM 等基线方法。已立项上海市级 SITP（一年半期）。', tags: ['GNN', 'Remote Sensing', 'Physics-driven', 'FFT Attention', 'Sep 2025—至今'], metrics: [{ value: 'RMSE 0.967', label: '测试集' }, { value: 'CRPS 0.488', label: '概率预测' }, { value: '上海市级 SITP', label: '立项级别' }] },
+                            { icon: 'ri-building-2-line', img: 'pics/基于多智能算法的城市热岛智能布局优化.png', ribbon: '书院5名', title: '基于多智能算法的城市热岛智能布局优化', desc: '构建"物理仿真—机器学习—智能优化"三阶段耦合框架。36 层元胞自动机热力学模型（30m×30m）模拟地表能量平衡，提取 40 维物理特征；GBR 代理模型较完整 CA 仿真加速超百万倍；PSO 结合自适应密化与贪心局部搜索联合优化土地利用、建筑高度与朝向。超 50 种场景验证，温度降低 0.5–1.5°C，热岛强度降低 0.3–0.9°C。获启迪书院设计创意学院班第 5 名，书院公众号推送展示。', tags: ['Cellular Automata', 'GBR', 'PSO', 'Urban Computing', 'Jan–Mar 2026'], metrics: [{ value: '百万倍', label: '仿真加速比' }, { value: '0.9°C', label: '热岛强度降低' }, { value: '班级第5名', label: '设计创意学院班' }] },
+                            { icon: 'ri-test-tube-line', img: 'pics/基于双流体模型的颗粒流撞击液池成坑机理研究与复现.png', ribbon: '物理竞赛', title: '基于双流体模型的颗粒流撞击液池成坑机理研究与复现', desc: '基于双流体连续介质假设构建颗粒流撞击液池形成"水下陨石坑"的完整理论模型。改进受阻沉降速度公式（引入惯性修正与有限水深影响），从 Navier-Stokes 方程严格推导轴对称壁射流剪应力分布，结合 Shields 准则与安息角确定成坑临界条件与动态演化方程；拟合剪应力非线性衰减模型（R²=0.9866），导出坑半径、深度及形成时间尺度的显式表达式。落球法测粘、沉降实验与水槽输沙等实验验证了理论模型可靠性，并开发 Python 数值模拟平台实现全过程仿真。首届同济物理竞赛复赛，答辩人获同组最高分（6.875/10），二等奖第 6 名、总第 4 名。', tags: ['Fluid Physics', 'Navier-Stokes', 'Python Simulation', 'Oct–Dec 2025'], metrics: [{ value: 'R²=0.9866', label: '拟合精度' }, { value: '6.875/10', label: '同组最高分' }, { value: '二等奖第6名', label: '同济物理竞赛' }] },
+                            { icon: 'ri-bike-line', img: 'pics/BDT vs MLP：城市共享单车小时需求预测对比评估.png', ribbon: 'MIT', title: 'BDT vs MLP：城市共享单车小时需求预测对比评估', desc: '基于 Capital Bikeshare 2011—2012 年 17,379 小时真实数据，经系统性异常值剔除、基于领域知识的特征工程（含时×日类型、时×季节交互项、气象乘积项、周期三角函数编码等，最终特征维度 238 维）及时序 80/20 划分，对两种模型进行超参数网格搜索，并采用 5 折时序交叉验证、置换特征重要性与残差诊断进行严格评估。BDT（MSE=14,799）与 MLP（MSE=14,649）精度相当，BDT 效率高出约 8.4 倍，泛化性能更稳定。产出全英文论文，期末 24/25 分，入选课程二阶段。指导教授：MIT Prof. Gunther Roland。', tags: ['BDT', 'MLP', 'Feature Engineering', 'MIT Prof. Gunther Roland', 'Mar–May 2026'], metrics: [{ value: '8.4×', label: 'BDT 效率优势' }, { value: '24/25', label: '期末考试' }, { value: '入选二阶段', label: '课程成果' }] },
+                            { icon: 'ri-flask-line', img: 'pics/基于机器学习的多种纳豆成分分析与功效预测.png', ribbon: '独作', title: '基于机器学习的多种纳豆成分分析与功效预测', desc: '基于机器学习方法系统分析 10 种纳豆品种中的生物活性成分，定量检测纳豆激酶、γ-氨基丁酸、总黄酮等关键功能化合物，结合统计分析与关联规则挖掘揭示成分与健康功效的内在关联，构建基于成分谱的效能预测模型，实现功能活性快速评估与品质分级。独立完成全部工作。', tags: ['Machine Learning', 'Data Analysis', '独作', 'Feb–Apr 2026'], metrics: [{ value: '10 种', label: '纳豆品种' }, { value: '独作', label: '完成形式' }] },
+                            { icon: 'ri-microscope-line', img: 'pics/基因组规模代谢模型整合靶向代谢组学揭示纳豆发酵食品安全风险根源与氨基酸强化靶标.png', ribbon: 'GitHub', title: '基因组规模代谢模型整合靶向代谢组学揭示纳豆发酵食品安全风险根源与氨基酸强化靶标', desc: '首次将枯草芽孢杆菌全基因组代谢模型（iBsu1103）与纳豆靶向 LC-MS/MS 代谢组学数据系统整合，通过两级名称匹配将 76 种显著差异代谢物（映射率 47.2%）锚定至模型节点并施加分泌/摄取方向性约束，构建约束通量平衡分析（cFBA）框架。综合运用通量变异性分析（FVA）、单基因敲除筛选、FSEOF 工程靶标预测与 KEGG 通路富集，系统解析纳豆发酵代谢代价与食品安全风险机制。框架成功复现纳豆固态发酵生长代价（生物量下降 7.6%），揭示乙酰乳酸溢流代谢为最显著网络重塑事件（通量激增 −742 mmol·gDW⁻¹·h⁻¹），经 BEST195 基因组分析锁定候选芳香族脱羧酶基因，并鉴定 28 个纳豆特异性必需基因；多目标 FSEOF 预测 ptsG 敲除与甲酸盐转运体过表达为 L-组氨酸强化最优双靶标，转录组交叉验证一致率 62%。独立完成，代码数据已在 GitHub 公开。', tags: ['Metabolic Modeling', 'cFBA', 'Bioinformatics', 'LC-MS/MS', '独作', 'Apr–Jun 2026'], metrics: [{ value: '28个', label: '必需基因' }, { value: '62%', label: '转录组验证' }, { value: 'GitHub', label: '代码公开' }] },
+                            { icon: 'ri-water-flash-line', img: 'pics/活水化瘀：城市供水生命线快速智能血检诊疗.png', ribbon: 'X-lab', title: '活"水"化瘀：城市供水生命线快速智能"血检"诊疗', desc: '针对城市供水管网腐蚀结垢、漏损与末梢水质波动等痛点，借鉴医学"血检"理念采集上下游水质变化数据，结合真实管段腐蚀量化评分体系与多元非线性回归模型反演管道健康状态；引入 YOLOv7 图像识别技术自动识别内窥照片腐蚀区域（准确率 81%，区域完整度 73%）。构建"多源感知—健康评价—风险预警—精准处置"闭环体系，无需开挖即可通过移动式采样工作站完成管网大面积初筛，成本较传统内窥镜检测降低 95% 以上。已在上海城市更新行动中应用 23 次，覆盖管道 340 km，采集水质数据 1500+ 条，诊断准确率超 83.3%；在首届 X-lab 科创文化日独立获得 400 万虚拟投资。', tags: ['YOLOv7', 'Image Recognition', 'Smart City', 'Apr–Jun 2026'], metrics: [{ value: '340 km', label: '覆盖管道' }, { value: '83.3%+', label: '诊断准确率' }, { value: '400万', label: 'X-lab 虚拟投资' }] }
+                        ],
+                        studentWork: [
+                            { date: 'Jun. 2026 — 至今', org: '同济大学启迪书院共产主义青年团委员会', role: '组织部副部长', img: 'pics/组织部副部长.jpg', items: ['策划并参与同济大学启迪书院第一次学生代表大会，全程负责组织协调', '负责启迪书院入党培养方案的修订与指标"启迪星"的统计工作', '成为入党积极分子，积极加强自身理论学习，持续组织策划并参与党团活动'] },
+                            { date: 'Mar. 2026 — Jun. 2026', org: '同济大学启迪书院共产主义青年团委员会', role: '组织部部员', items: ['策划并参与共青团同济大学启迪书院第一次代表大会，负责会务流程设计与现场协调', '成为入党积极分子，积极加强自身理论学习，参与组织策划党团活动'] },
+                            { date: 'Mar. 2026 — Apr. 2026', org: '同济大学共产主义青年团委员会', role: '优秀主题团日展演总负责人', img: 'pics/优秀主题团日展演.png', items: ['撰写 2026 年下半学期启迪书院优秀主题团日活动完整策划方案，成功组织实施并完成官方推送', '全天全程参与团日现场布置与活动指导，效果获书院公众号展示与推广'] },
+                            { date: 'Sep. 2025 — Mar. 2026', org: '同济大学启迪书院学生自我管理委员会', role: '组织策划部部员', items: ['一学期内完成超过 15 次活动的策划或组织参与，涵盖学术讲座、文化活动和社交聚会', '参与修订启迪书院相关工作办法，为学院的党团建设提供制度建议并获采纳'] }
+                        ],
+                        volunteer: [
+                            { date: 'Dec. 2025', title: '2025 年启迪书院迎双新晚会 — CL', desc: '提供线上与线下的晚会策划指导并参与道具、催场、场维三个组的工作', img: 'pics/启迪书院迎双新晚会.jpg' },
+                            { date: 'Nov. 2025', title: '"智暖夕阳·爱与科技同行"科技助老五育活动 — 实践组成员', desc: '全程线下参与活动，并负责整体推文撰写与公众号美化工作', img: 'pics/智暖夕阳.jpg' },
+                            { date: 'Oct. 2025', title: '"蕙心纨质，爱与和平的守望"团支部建设寻访活动 — 参与者', desc: '参与班级团支部文化建设寻访活动，通过实地走访与资料收集，深入挖掘"爱与和平"主题内涵，形成寻访报告并为团支部特色建设提供素材支撑，推动班级形成有厚度、有温度的团组织文化', img: 'pics/蕙心纨质团支部建设寻访活动.jpg' },
+                            { date: 'Nov. 2025', title: '启迪书院社区服务 — 社区巡查员', desc: '在同济大学四平路校区西南二楼附近巡视，确保同学举止文明并提供相应帮助' },
+                            { date: 'Sep. 2025', title: '2025 年同济大学迎新晚会 — 场维组组员', desc: '组织并参与晚会的现场维护工作，提供引导服务和后勤保障', img: 'pics/同济大学迎新晚会合照.jpg' },
+                            { date: 'Jan. 2026', title: '2025—2026 年同济大学寒假返校宣讲 — 优秀队员', desc: '参与同济大学寒假返校宣讲活动，完成宣讲任务并获评优秀队员' },
+                            { date: 'Apr. 2026', title: '"绳采同济"首届同济大学跳绳班级联赛启迪书院院内初赛 — 联络组成员', desc: '负责赛事联络协调与现场保障工作，确保比赛顺利进行' }
+                        ]
+                    }, // end zh
+                    en: {
+                        heroLabel: 'Tongji University · Qidi College · Class of 2025',
+                        bio: 'An ordinary person trying to do everything a little bit better.',
+                        stats: { awards: 'Awards\n& Honors', projects: 'Research &\nProjects', volunteer: 'Volunteer\nHours' },
+                        footerSlogan: 'Tongji University · Qidi College · Undergraduate',
+                        connect: 'Connect',
+                        volunteerNote: 'Total volunteer hours: 60h+',
+                        expand: 'Show more ▾',
+                        collapse: 'Show less ▴',
+                        viewCert: 'View certificate',
+                        quote: 'The world is loud. I just need a moment of quiet.',
+                        sections: { about: 'About Me', education: 'Education', skills: 'Skills', projects: 'Research & Projects', awards: 'Awards & Honors', activities: 'Student Activities', volunteer: 'Volunteer Work' },
+                        nav: ['About','Education','Skills','Research','Activities','Awards','Volunteer','Contact'],
+                        aboutIntro: 'Freshman at Tongji University\'s Qidi College (Class of 2025), with interests spanning machine learning, remote sensing data analysis, mathematical modeling, and cybersecurity. Passionate about solving real-world problems with code and models. In my spare time I enjoy running, practicing calligraphy, and losing myself in music.',
+                        aboutCards: [
+                            { icon: 'ri-brain-line', title: 'Machine Learning', desc: 'Python, TensorFlow, Scikit-learn; skilled in predictive modeling and feature engineering' },
+                            { icon: 'ri-earth-line', title: 'Remote Sensing', desc: 'Integrating CMFD, GPM, MODIS, SMAP multi-source variables with hydrological physics' },
+                            { icon: 'ri-code-s-slash-line', title: 'Programming', desc: 'Python, C++, C, JavaScript, MATLAB, PHP; familiar with Django, Node.js, MySQL' },
+                            { icon: 'ri-shield-keyhole-line', title: 'Cybersecurity', desc: 'CTF enthusiast; CyberGame 2026 global top 4%, CatCTF 2nd prize' },
+                            { icon: 'ri-bar-chart-box-line', title: 'Math Modeling', desc: 'Mathorcup 2026 (Problem D) National 1st Prize, solo — sole undergrad at Tongji' },
+                            { icon: 'ri-translate-2', title: 'Languages', desc: 'CET-4: 646; French B1; Japanese N3; Tongji English Assessment: Half-exempt (top level)' }
+                        ],
+                        education: [
+                            { date: '2025 — Present', school: 'Tongji University', degree: 'B.Eng. Candidate · Qidi College · Shanghai, China', desc: 'GPA 4.72/5 (Fall, top 7%), 4.48/5 (Spring, top 21%) | Key courses: Advanced Programming (A), Linear Algebra Honors (A), General Physics (A), General Chemistry (A), AI Engineering Fundamentals (A)' },
+                            { date: '2022 — 2025', school: 'Harbin No. 9 High School', degree: 'High School Graduate · Harbin, China', desc: 'Gaokao: 659/750 (top 0.3%) | English 143/150, Math 129/150, Physics 88/100, Chemistry 92/100, Biology 92/100' }
+                        ],
+                        skills: [
+                            { category: 'Languages', icon: 'ri-code-s-slash-line', items: [{ name: 'Python', level: 88 }, { name: 'C++', level: 78 }, { name: 'C', level: 65 }, { name: 'JavaScript', level: 60 }, { name: 'MATLAB', level: 55 }, { name: 'PHP', level: 42 }] },
+                            { category: 'Frameworks & DB', icon: 'ri-stack-line', items: [{ name: 'TensorFlow', level: 78 }, { name: 'Scikit-learn', level: 82 }, { name: 'Django', level: 58 }, { name: 'Node.js', level: 55 }, { name: 'MySQL', level: 60 }] },
+                            { category: 'Tools & Platforms', icon: 'ri-tools-line', items: [{ name: 'Git', level: 85 }, { name: 'Linux / Bash', level: 70 }, { name: 'VS Code', level: 90 }, { name: 'PyCharm', level: 75 }, { name: 'Jupyter', level: 80 }, { name: 'MS Office', level: 65 }] },
+                            { category: 'English', icon: 'ri-chat-1-line', items: ['CET-4: 646/710', 'Gaokao English: 143/150', 'Tongji Assessment: Half-exempt (top)'] },
+                            { category: 'Other Languages', icon: 'ri-global-line', items: ['French B1 (online test)', 'Japanese N3 (online test)'] }
+                        ],
+                        projects: [
+                            { icon: 'ri-map-2-line', img: 'pics/基于多源遥感数据的干旱时空预测.png', ribbon: 'Provincial', title: 'Spatiotemporal Drought Prediction via Multi-Source Remote Sensing', desc: 'Proposed the physics-driven hierarchical spatiotemporal GNN HieroST-PGNN and adaptive drought index PMEDI, fusing precipitation, temperature, soil moisture, evapotranspiration, vegetation, and groundwater anomalies (CMFD, GPM, MODIS, SMAP). FFT frequency-domain attention and hierarchical node sampling with climate-zone adaptive weights. On 2000–2023 data: RMSE=0.967, CRPS=0.488, 93.1% 90%-CI coverage, outperforming LSTM and ConvLSTM. Funded as Shanghai Municipality SITP project.', tags: ['GNN', 'Remote Sensing', 'Physics-driven', 'FFT Attention', 'Sep 2025–Present'], metrics: [{ value: 'RMSE 0.967', label: 'Test set' }, { value: 'CRPS 0.488', label: 'Probabilistic' }, { value: 'Shanghai SITP', label: 'Funding level' }] },
+                            { icon: 'ri-building-2-line', img: 'pics/基于多智能算法的城市热岛智能布局优化.png', ribbon: 'Class 5th', title: 'Urban Heat Island Mitigation via Multi-Intelligence Optimization', desc: 'Built a "physics simulation – machine learning – intelligent optimization" three-stage coupled framework. A 36-layer cellular automaton (30m×30m grid) simulates surface energy balance; GBR surrogate model accelerates inference by over 1,000,000× vs. full CA; PSO with adaptive densification and greedy local search jointly optimizes land use, building height, and orientation. Validated in 50+ scenarios: temperature reduced by 0.5–1.5°C, heat island intensity reduced by 0.3–0.9°C. Ranked 5th in class, featured on college official account.', tags: ['Cellular Automata', 'GBR', 'PSO', 'Urban Computing', 'Jan–Mar 2026'], metrics: [{ value: '1,000,000×', label: 'Speedup' }, { value: '0.9°C', label: 'UHI reduction' }, { value: 'Rank 5 in class', label: 'Design Studio' }] },
+                            { icon: 'ri-test-tube-line', img: 'pics/基于双流体模型的颗粒流撞击液池成坑机理研究与复现.png', ribbon: 'Physics', title: 'Granular Flow–Liquid Pool Crater Mechanism: Two-Fluid Model Study', desc: 'Derived a complete theoretical model for underwater crater formation under the two-fluid continuum assumption. Improved hindered-settling velocity with inertial corrections; rigorously derived wall-jet shear stress distribution from Navier-Stokes; determined crater threshold and evolution equations via Shields criterion and angle of repose. Fitted nonlinear shear decay model (R²=0.9866) and derived explicit expressions for crater radius, depth, and time scale. Developed Python simulation platform. Tongji Physics Contest: semifinalist, highest scorer in group (6.875/10), 2nd-prize 6th place, 4th overall.', tags: ['Fluid Physics', 'Navier-Stokes', 'Python Simulation', 'Oct–Dec 2025'], metrics: [{ value: 'R²=0.9866', label: 'Model fit' }, { value: '6.875/10', label: 'Top scorer in group' }, { value: '2nd Prize, 6th', label: 'Tongji Physics' }] },
+                            { icon: 'ri-bike-line', img: 'pics/BDT vs MLP：城市共享单车小时需求预测对比评估.png', ribbon: 'MIT', title: 'BDT vs MLP: Urban Bike-Sharing Hourly Demand Forecasting', desc: 'Evaluated Histogram-Based Gradient Boosting (BDT) and MLP on Capital Bikeshare 2011–2012 data (17,379 hours). Domain-knowledge feature engineering produced 238 features; 80/20 time-series split; hyperparameter grid search and 5-fold time-series CV. BDT (MSE=14,799) and MLP (MSE=14,649) performed comparably; BDT was ~8.4× faster with more stable generalization. Full English paper produced; exam 24/25; advanced to course Stage 2. Supervised by MIT Prof. Gunther Roland.', tags: ['BDT', 'MLP', 'Feature Engineering', 'MIT Prof. Gunther Roland', 'Mar–May 2026'], metrics: [{ value: '8.4×', label: 'BDT efficiency' }, { value: '24/25', label: 'Exam score' }, { value: 'Stage 2', label: 'Course outcome' }] },
+                            { icon: 'ri-flask-line', img: 'pics/基于机器学习的多种纳豆成分分析与功效预测.png', ribbon: 'Solo', title: 'ML-Based Bioactive Component Analysis & Efficacy Prediction of Natto', desc: 'Systematically analyzed bioactive components in 10 natto varieties using machine learning, quantifying nattokinase, GABA, total flavonoids, and other key compounds. Combined statistical analysis and association rule mining to reveal component–health-benefit relationships. Built a component-profile-based efficacy prediction model for rapid functional activity assessment and quality grading. Sole author.', tags: ['Machine Learning', 'Data Analysis', 'Solo', 'Feb–Apr 2026'], metrics: [{ value: '10 varieties', label: 'Natto types' }, { value: 'Solo', label: 'Authorship' }] },
+                            { icon: 'ri-microscope-line', img: 'pics/基因组规模代谢模型整合靶向代谢组学揭示纳豆发酵食品安全风险根源与氨基酸强化靶标.png', ribbon: 'GitHub', title: 'Genome-Scale Metabolic Modeling Reveals Natto Fermentation Safety Risks & Amino Acid Enhancement Targets', desc: 'First integration of B. subtilis genome-scale model (iBsu1103) with targeted LC-MS/MS metabolomics data; anchored 76 differential metabolites (47.2% mapping rate) with directional constraints into a cFBA framework. Identified 28 natto-specific essential genes; multi-target FSEOF predicted ptsG knockout + formate transporter overexpression as optimal dual targets for L-histidine enhancement (62% transcriptome cross-validation consistency). Code and data publicly available on GitHub.', tags: ['Metabolic Modeling', 'cFBA', 'Bioinformatics', 'LC-MS/MS', 'Solo', 'Apr–Jun 2026'], metrics: [{ value: '28 genes', label: 'Essential genes' }, { value: '62%', label: 'Cross-validation' }, { value: 'GitHub', label: 'Open source' }] },
+                            { icon: 'ri-water-flash-line', img: 'pics/活水化瘀：城市供水生命线快速智能血检诊疗.png', ribbon: 'X-lab', title: 'Smart "Blood Test" Diagnostic System for Urban Water Supply Networks', desc: 'Inspired by medical blood testing, collected upstream/downstream water quality data, combined quantitative corrosion scoring and nonlinear regression to infer pipe health; integrated YOLOv7 endoscopy image recognition (81% accuracy, 73% region completeness). Built closed-loop "multi-source sensing – health assessment – risk alert – precise response" system, reducing cost by 95%+ vs. traditional endoscopy. Applied 23 times in Shanghai urban renewal, covering 340 km of pipes, 1,500+ water quality records, >83.3% diagnostic accuracy. Won ¥4M virtual investment at Qidi X-lab Innovation Day.', tags: ['YOLOv7', 'Image Recognition', 'Smart City', 'Apr–Jun 2026'], metrics: [{ value: '340 km', label: 'Pipes covered' }, { value: '83.3%+', label: 'Accuracy' }, { value: '¥4M virtual', label: 'X-lab investment' }] }
+                        ],
+                        awards: [
+                            { date: 'Jun. 2026', ribbon: 'MIT', title: 'NEOSCHOLAR International Elite Innovation Program — Stage 2 Selection', desc: 'Selected into MIT Prof. Gunther Roland\'s international research group after submitting application materials; independently completed research tasks under his supervision; ranked 1st in the group overall', tier: 'gold', img: 'pics/NEOSCHOLAR二阶段入围.jpg' },
+                            { date: 'May 2026', ribbon: 'National', title: 'National College English Vocabulary Competition ("Cídárén Cup")', desc: 'Campus Top 15%', tier: '', img: 'pics/词达人.jpg' },
+                            { date: 'May 2026', ribbon: 'FLTRP', title: 'FLTRP·"Guocai Cup" "Understanding Contemporary China" Foreign Language Competition — 2nd Prize', desc: '', tier: 'silver', img: 'pics/理解当代中国.jpg' },
+                            { date: 'Apr. 2026', ribbon: 'Nat\'l 1st', title: 'Mathorcup Mathematical Modeling Contest (Problem D) — National 1st Prize', desc: 'Sole author; only Tongji undergraduate in top tier', tier: 'gold', img: 'pics/mathorcup.png' },
+                            { date: 'Apr. 2026', ribbon: 'Global 4%', title: 'CyberGame 2026 Global Cybersecurity Challenge', desc: 'Top 4% among all scored participants worldwide', tier: 'gold', img: 'pics/CyberGame2026-PlayerCertificate-en-Bailian.png' },
+                            { date: 'Apr. 2026', ribbon: 'Qingma', title: 'Tongji University 9th "Qingma Engineering" Yinfu Class', desc: 'Sole nominee from Qidi College; only freshman candidate', tier: '', img: 'pics/殷夫班.jpg' },
+                            { date: 'Apr. 2026', ribbon: 'Nat\'l 3rd', title: 'National College English Contest (Type C) — National 3rd Prize', desc: '128/150 points', tier: '', img: 'pics/大学生英语竞赛.jpg' },
+                            { date: 'Apr. 2026', ribbon: 'Global 30%', title: 'UMassCTF 2026', desc: 'Top 30%', tier: '', img: 'pics/UMASSCTF.png' },
+                            { date: 'Dec. 2025', ribbon: '2nd Prize', title: '1st Tongji University Student Physics Academic Competition — 2nd Prize', desc: 'Highest scorer in group (6.875/10); team 4th overall', tier: 'silver', img: 'pics/同济大学物理学术竞赛.jpg' },
+                            { date: 'Oct. 2025', ribbon: '2nd Prize', title: 'CatCTF Tongji University Cybersecurity Contest — 2nd Prize', desc: '', tier: 'silver', img: 'pics/CatCTF网络安全新生赛.jpg' },
+                            { date: 'Sep. 2025', ribbon: 'Press', title: 'Guangming Daily "Educator" Magazine, Sep. 2025, Issue 4', desc: 'Interviewed; published essay "A Precourse Healing Journey"', tier: '', img: 'pics/教育家杂志.png' },
+                            { date: 'Sep. 2025', ribbon: 'Volunteer', title: 'Tongji University Welcome Gala — Outstanding Volunteer', desc: 'Recognized for outstanding volunteer service at the "Jiyi Xinghuo Yao Xincheng" 2025 Tongji University Arts Festival Opening Ceremony & Freshman Gala', tier: '', img: 'pics/同济大学迎新晚会优秀志愿者.jpg' },
+                            { date: 'Jun. 2025', ribbon: '646/710', title: 'CET-4 (College English Test Band 4) — 646/710', desc: '', tier: '', img: 'pics/四级成绩单.jpg' }
+                        ],
+                        studentWork: [
+                            { date: 'Jun. 2026 — Present', org: 'CYL Committee, Qidi College, Tongji University', role: 'Vice Director, Organization Dept.', img: 'pics/组织部副部长.jpg', items: ['Planned and coordinated the 1st Student Representative Congress of Qidi College', 'Revised the Party development plan and maintained the "Qidi Star" evaluation system', 'Actively participated in Party-Youth League building activities as a Party candidate'] },
+                            { date: 'Mar. 2026 — Jun. 2026', org: 'CYL Committee, Qidi College, Tongji University', role: 'Member, Organization Dept.', items: ['Planned the 1st Congress of the CYL Qidi Branch; handled agenda and on-site coordination', 'Joined Party candidate program; participated in Party-Youth League events'] },
+                            { date: 'Mar. 2026 — Apr. 2026', org: 'CYL Committee, Tongji University', role: 'Head Organizer, Outstanding Thematic League Day Exhibition', img: 'pics/优秀主题团日展演.png', items: ['Authored and executed the full event plan for Qidi\'s outstanding thematic league day; published official recap', 'Supervised on-site setup and guided all activities; results featured on college official account'] },
+                            { date: 'Sep. 2025 — Mar. 2026', org: 'Student Self-Governance Committee, Qidi College', role: 'Member, Planning & Organization Dept.', items: ['Organized 15+ events in one semester including academic lectures, cultural activities, and social gatherings', 'Contributed to revising college work regulations; institutional proposals adopted by the college'] }
+                        ],
+                        volunteer: [
+                            { date: 'Dec. 2025', title: 'Qidi College "Double New" Gala 2025 — Chief Lead (CL)', desc: 'Provided online/offline planning guidance; participated in props, stage management, and venue groups', img: 'pics/启迪书院迎双新晚会.jpg' },
+                            { date: 'Nov. 2025', title: '"Warm Twilight Years · Tech & Love" Science-for-Elderly Activity — Practice Member', desc: 'Participated offline throughout; responsible for writing and editing the official WeChat recap', img: 'pics/智暖夕阳.jpg' },
+                            { date: 'Nov. 2025', title: 'Qidi College Community Service — Community Inspector', desc: 'Patrolled near Building SW-2 of Siping Campus to maintain civility and assist students' },
+                            { date: 'Oct. 2025', title: '"Gentle Heart, Noble Character: Watching Over Love and Peace" — League Branch Cultural Tour', desc: 'Participated in a cultural survey activity for class league branch development; conducted field visits and research to explore the theme of "love and peace," produced a survey report, and contributed thematic materials to support the league branch\'s distinctive cultural identity.', img: 'pics/蕙心纨质团支部建设寻访活动.jpg' },
+                            { date: 'Sep. 2025', title: 'Tongji University 2025 Freshmen Welcome Gala — Venue Group', desc: 'Organized on-site maintenance, provided guidance services and logistical support', img: 'pics/同济大学迎新晚会合照.jpg' },
+                            { date: 'Jan. 2026', title: 'Tongji 2025–2026 Winter Break Outreach — Outstanding Member', desc: 'Participated in campus outreach activities during winter break; recognized as outstanding member' },
+                            { date: 'Apr. 2026', title: '1st Tongji Jump Rope League — Qidi College Preliminary Round — Liaison Group Member', desc: 'Handled event liaison, coordination and on-site support to ensure smooth operation of the competition' }
+                        ]
+                    }, // end en
+                    ja: {
+                        heroLabel: '同済大学 · 啓迪学院 · 2025 年度入学',
+                        bio: '何事も少しだけうまくやろうとしている普通の人間です。',
+                        stats: { awards: '受賞・\n栄誉', projects: '研究・\nプロジェクト', volunteer: 'ボランティア\n時間' },
+                        footerSlogan: '同済大学 · 啓迪学院 · 学部生',
+                        connect: 'コンタクト',
+                        volunteerNote: 'ボランティア累計時間 60h+',
+                        expand: '全文を表示 ▾',
+                        collapse: '折りたたむ ▴',
+                        viewCert: '証明書を見る',
+                        quote: '世界は騒がしい。少し静かにしていたい。',
+                        sections: { about: '自己紹介', education: '学歴', skills: 'スキル', projects: '研究・プロジェクト', awards: '受賞・栄誉', activities: '学生活動', volunteer: 'ボランティア' },
+                        nav: ['自己紹介','学歴','スキル','研究','活動','受賞','ボランティア','連絡先'],
+                        aboutIntro: '同済大学啓迪学院 2025 年度入学。機械学習・リモートセンシングデータ解析・数理モデリング・サイバーセキュリティに興味を持ち、コードとモデルで現実の問題を解くことに情熱を注いでいます。余暇はランニング、書道の練習、または音楽に没頭する時間を楽しんでいます。',
+                        aboutCards: [
+                            { icon: 'ri-brain-line', title: '機械学習', desc: 'Python, TensorFlow, Scikit-learn；予測モデル構築と特徴量エンジニアリングを得意とする' },
+                            { icon: 'ri-earth-line', title: 'リモートセンシング', desc: 'CMFD・GPM・MODIS・SMAP 等の多源変量を統合し水文物理プロセスを埋め込む' },
+                            { icon: 'ri-code-s-slash-line', title: 'プログラミング', desc: 'Python, C++, C, JavaScript, MATLAB, PHP；Django, Node.js, MySQL に精通' },
+                            { icon: 'ri-shield-keyhole-line', title: 'サイバーセキュリティ', desc: 'CTF 愛好者；CyberGame 2026 世界上位 4%，CatCTF 2 等賞' },
+                            { icon: 'ri-bar-chart-box-line', title: '数理モデリング', desc: 'Mathorcup 2026（D 問題）全国 1 等賞・単独完成，同済大学学部生唯一' },
+                            { icon: 'ri-translate-2', title: '語学力', desc: 'CET-4: 646；フランス語 B1；日本語 N3；同済大学英語評価: Half-exempt（最高級）' }
+                        ],
+                        education: [
+                            { date: '2025 年 — 現在', school: '同済大学', degree: '工学学士課程在学 · 啓迪学院 · 上海，中国', desc: 'GPA 4.72/5（秋学期，上位 7%），4.48/5（春学期，上位 21%）｜主要科目：上級言語プログラミング(A)，線形代数(優等)(A)，一般物理(A)，一般化学(A)，AI工学基礎(A)' },
+                            { date: '2022 年 — 2025 年', school: 'ハルビン市第九中学校', degree: '高校卒業 · ハルビン，中国', desc: '高考（大学入試）：659/750（上位 0.3%）｜英語 143/150，数学 129/150，物理 88/100，化学 92/100，生物 92/100' }
+                        ],
+                        skills: [
+                            { category: 'プログラミング言語', icon: 'ri-code-s-slash-line', items: [{ name: 'Python', level: 88 }, { name: 'C++', level: 78 }, { name: 'C', level: 65 }, { name: 'JavaScript', level: 60 }, { name: 'MATLAB', level: 55 }, { name: 'PHP', level: 42 }] },
+                            { category: 'フレームワーク・DB', icon: 'ri-stack-line', items: [{ name: 'TensorFlow', level: 78 }, { name: 'Scikit-learn', level: 82 }, { name: 'Django', level: 58 }, { name: 'Node.js', level: 55 }, { name: 'MySQL', level: 60 }] },
+                            { category: 'ツール・プラットフォーム', icon: 'ri-tools-line', items: [{ name: 'Git', level: 85 }, { name: 'Linux / Bash', level: 70 }, { name: 'VS Code', level: 90 }, { name: 'PyCharm', level: 75 }, { name: 'Jupyter', level: 80 }, { name: 'MS Office', level: 65 }] },
+                            { category: '英語能力', icon: 'ri-chat-1-line', items: ['CET-4: 646/710', '高考英語: 143/150', '同済英語評価: Half-exempt（最高級）'] },
+                            { category: 'その他の言語', icon: 'ri-global-line', items: ['フランス語 B1（オンラインテスト）', '日本語 N3（オンラインテスト）'] }
+                        ],
+                        projects: [
+                            { icon: 'ri-map-2-line', img: 'pics/基于多源遥感数据的干旱时空预测.png', ribbon: '省部級', title: '多源リモートセンシングデータによる干ばつ時空間予測', desc: '物理駆動型階層時空間グラフニューラルネットワーク HieroST-PGNN と適応型干ばつ指数 PMEDI を提案。降水・気温・土壌水分・蒸発散・植生指数・地下水異常等の多源変量（CMFD・GPM・MODIS・SMAP）を統合し，FFT 周波数域アテンションと階層ノードサンプリングを採用。2000–2023 年データで RMSE=0.967，CRPS=0.488，90% 信頼区間カバー率 93.1%，LSTM・ConvLSTM を上回る精度。上海市レベル SITP プロジェクトとして採択。', tags: ['GNN', 'リモートセンシング', '物理駆動', 'FFT', '2025年9月–現在'], metrics: [{ value: 'RMSE 0.967', label: 'テストセット' }, { value: 'CRPS 0.488', label: '確率予測' }, { value: '上海市 SITP', label: '採択レベル' }] },
+                            { icon: 'ri-building-2-line', img: 'pics/基于多智能算法的城市热岛智能布局优化.png', ribbon: '学院5位', title: '多段階インテリジェントアルゴリズムによる都市ヒートアイランド最適化', desc: '「物理シミュレーション–機械学習–スマート最適化」三段階結合フレームワークを構築。36 層セルオートマトン熱力学モデル（30m×30m）で地表エネルギー収支を模擬；GBR 代理モデルが完全 CA より 100 万倍以上高速化；PSO＋適応密化・貪欲局所探索で土地利用・建物高度・向きを同時最適化。50 以上のシナリオで気温 0.5–1.5°C，ヒートアイランド強度 0.3–0.9°C 低減。クラス 5 位，学院公式アカウントで紹介。', tags: ['セルオートマトン', 'GBR', 'PSO', '都市計算', '2026年1–3月'], metrics: [{ value: '100万倍', label: '高速化' }, { value: '0.9°C', label: 'UHI 低減' }, { value: 'クラス5位', label: 'デザインスタジオ' }] },
+                            { icon: 'ri-test-tube-line', img: 'pics/基于双流体模型的颗粒流撞击液池成坑机理研究与复现.png', ribbon: '物理競技', title: '二流体モデルによる粒子流衝突液面クレーター形成機構の研究', desc: '二流体連続体仮定に基づき水中クレーター形成の完全理論モデルを構築。改良型沈降速度式と Navier-Stokes 方程式から壁面噴流せん断応力分布を厳密に導出；Shields 基準と安息角でクレーター臨界条件と動的発展式を決定。非線形減衰モデル（R²=0.9866）を適合；Python 数値シミュレーションプラットフォームを開発。第 1 回同済大学学生物理学術競技会：グループ最高得点（6.875/10），2 等賞 6 位，総合 4 位。', tags: ['流体物理', 'Navier-Stokes', 'Python シミュレーション', '2025年10–12月'], metrics: [{ value: 'R²=0.9866', label: 'モデル精度' }, { value: '6.875/10', label: 'グループ最高点' }, { value: '2等賞6位', label: '同済物理競技' }] },
+                            { icon: 'ri-bike-line', img: 'pics/BDT vs MLP：城市共享单车小时需求预测对比评估.png', ribbon: 'MIT', title: 'BDT vs MLP：都市シェアサイクル時間別需要予測比較評価', desc: 'Capital Bikeshare 2011–2012 年データ（17,379 時間）を対象に，ドメイン知識を活用した特徴量エンジニアリング（238 次元）と時系列 80/20 分割でモデルを比較。BDT（MSE=14,799）と MLP（MSE=14,649）は同等精度，BDT は約 8.4 倍高速で汎化も安定。英語論文を執筆；期末試験 24/25 点；課程第 2 段階に選抜。指導：MIT Prof. Gunther Roland。', tags: ['BDT', 'MLP', '特徴量エンジニアリング', 'MIT Prof. Gunther Roland', '2026年3–5月'], metrics: [{ value: '8.4×', label: 'BDT 効率' }, { value: '24/25', label: '期末試験' }, { value: '第2段階選抜', label: '授業成果' }] },
+                            { icon: 'ri-flask-line', img: 'pics/基于机器学习的多种纳豆成分分析与功效预测.png', ribbon: '単著', title: 'ML による納豆の生理活性成分分析と機能性予測', desc: '機械学習を用いて 10 品種の納豆の生理活性成分を系統的に分析。ナットウキナーゼ・GABA・総フラボノイド等を定量し，統計解析と関連ルールマイニングで成分と健康効果の関係を解明。成分プロファイルに基づく機能活性予測モデルを構築し，品質評価を実現。単著。', tags: ['機械学習', 'データ分析', '単著', '2026年2–4月'], metrics: [{ value: '10 品種', label: '納豆品種' }, { value: '単著', label: '著作形式' }] },
+                            { icon: 'ri-microscope-line', img: 'pics/基因组规模代谢模型整合靶向代谢组学揭示纳豆发酵食品安全风险根源与氨基酸强化靶标.png', ribbon: 'GitHub', title: 'ゲノムスケール代謝モデル×標的メタボロミクスによる納豆発酵の食品安全リスク解析', desc: 'B. subtilis ゲノムスケール代謝モデル（iBsu1103）と LC-MS/MS メタボロミクスデータを初めて統合し，76 種の差異代謝物（マッピング率 47.2%）を cFBA フレームワークに組み込む。28 個の納豆特異的必須遺伝子を同定；多目的 FSEOF で ptsG ノックアウト＋ギ酸輸送体過剰発現を L-ヒスチジン強化の最適二重標的として予測（転写組交差検証一致率 62%）。コード・データは GitHub 公開。', tags: ['代謝モデリング', 'cFBA', 'バイオインフォマティクス', 'LC-MS/MS', '単著', '2026年4–6月'], metrics: [{ value: '28 遺伝子', label: '必須遺伝子' }, { value: '62%', label: '交差検証' }, { value: 'GitHub', label: 'オープンソース' }] },
+                            { icon: 'ri-water-flash-line', img: 'pics/活水化瘀：城市供水生命线快速智能血检诊疗.png', ribbon: 'X-lab', title: '都市水道ネットワーク向けスマート「血液検査」診断システム', desc: '医学の血液検査を参考に，上下流の水質データを収集し，非線形回帰モデルで管路健全状態を推定。YOLOv7 による内視鏡画像の腐食領域認識（精度 81%，完整度 73%）を組み合わせ，従来の内視鏡検査比コスト 95% 削減。上海市都市更新行動で 23 回適用，対象管路 340 km，水質データ 1,500 件以上，診断精度 83.3% 超。第 1 回 X-lab イノベーションデーで仮想投資 400 万元獲得。', tags: ['YOLOv7', '画像認識', 'スマートシティ', '2026年4–6月'], metrics: [{ value: '340 km', label: '対象管路' }, { value: '83.3%+', label: '診断精度' }, { value: '400万元', label: 'X-lab 仮想投資' }] }
+                        ],
+                        awards: [
+                            { date: 'Jun. 2026', ribbon: 'MIT', title: 'NEOSCHOLAR 国際エリート革新人材育成プログラム — 第 2 段階入選', desc: '申請書類を提出し MIT 教授 Gunther Roland とのやり取りを経て国際研究グループに入選；指導のもと研究課題を単独で完成；グループ内総合成績第 1 位', tier: 'gold', img: 'pics/NEOSCHOLAR二阶段入围.jpg' },
+                            { date: 'May 2026', ribbon: '全国', title: '全国大学生英語語彙能力コンテスト（"詞達人杯"）', desc: '校内試験 上位 15%', tier: '', img: 'pics/词达人.jpg' },
+                            { date: 'May 2026', ribbon: '外研社', title: 'FLTRP「国才杯」「現代中国を理解する」外国語能力公開コンテスト — 2 等賞', desc: '', tier: 'silver', img: 'pics/理解当代中国.jpg' },
+                            { date: 'Apr. 2026', ribbon: '全国1等', title: 'Mathorcup 数理モデリングコンテスト（D 問題）— 全国 1 等賞', desc: '全工程を単独完成，同済大学学部生組唯一', tier: 'gold', img: 'pics/mathorcup.png' },
+                            { date: 'Apr. 2026', ribbon: '世界4%', title: 'CyberGame 2026 グローバルサイバーセキュリティチャレンジ', desc: '得点参加者中世界上位 4%', tier: 'gold', img: 'pics/CyberGame2026-PlayerCertificate-en-Bailian.png' },
+                            { date: 'Apr. 2026', ribbon: '青馬工程', title: '同済大学第 9 期「青馬工程」殷夫班', desc: '啓迪学院唯一推薦者，唯一の 1 年生候補', tier: '', img: 'pics/殷夫班.jpg' },
+                            { date: 'Apr. 2026', ribbon: '全国3等', title: '全国大学英語コンテスト（C 類）— 全国 3 等賞', desc: '128/150 点', tier: '', img: 'pics/大学生英语竞赛.jpg' },
+                            { date: 'Apr. 2026', ribbon: '世界30%', title: 'UMassCTF 2026', desc: '上位 30%', tier: '', img: 'pics/UMASSCTF.png' },
+                            { date: 'Dec. 2025', ribbon: '2等賞', title: '第 1 回同済大学学生物理学術競技会 — 2 等賞', desc: 'グループ最高得点（6.875/10），総合 4 位', tier: 'silver', img: 'pics/同济大学物理学术竞赛.jpg' },
+                            { date: 'Oct. 2025', ribbon: '2等賞', title: 'CatCTF 同済大学サイバーセキュリティコンテスト — 2 等賞', desc: '', tier: 'silver', img: 'pics/CatCTF网络安全新生赛.jpg' },
+                            { date: 'Sep. 2025', ribbon: 'メディア', title: '光明日報「教育家」誌 2025 年 9 月号第 4 期', desc: 'インタビューを受け「プレ授業の癒し記」を掲載', tier: '', img: 'pics/教育家杂志.png' },
+                            { date: 'Sep. 2025', ribbon: '優秀', title: '同済大学迎新晩会 — 優秀ボランティア', desc: '「済芸星火耀新程」2025年同済大学芸術祭開幕式・新入生文芸晩会にてボランティアとして参加，優秀な活躍が認められ表彰', tier: '', img: 'pics/同济大学迎新晚会优秀志愿者.jpg' },
+                            { date: 'Jun. 2025', ribbon: '646点', title: '大学英語四級（CET-4）— 646/710', desc: '', tier: '', img: 'pics/四级成绩单.jpg' }
+                        ],
+                        studentWork: [
+                            { date: 'Jun. 2026 — 現在', org: '同済大学啓迪学院 共産主義青年団委員会', role: '組織部副部長', img: 'pics/组织部副部长.jpg', items: ['啓迪学院第 1 回学生代表大会を企画・実施，全工程の組織調整を担当', '入党育成計画の改訂と「啓迪スター」指標の統計業務を担当', '入党積極分子として自己研鑽を続け，党・共青団活動を積極的に企画・参加'] },
+                            { date: 'Mar. 2026 — Jun. 2026', org: '同済大学啓迪学院 共産主義青年団委員会', role: '組織部員', items: ['啓迪学院第 1 回共青団代表大会を企画；議事進行と現場調整を担当', '入党積極分子として理論学習を強化し，党・共青団活動に参加'] },
+                            { date: 'Mar. 2026 — Apr. 2026', org: '同済大学 共産主義青年団委員会', role: '優秀テーマ団日展演 総責任者', img: 'pics/优秀主题团日展演.png', items: ['2026 年下半期啓迪学院優秀テーマ団日活動の完全企画案を作成・実施，公式発信を完了', '終日現場設営と活動指導に参加；成果が学院公式アカウントで紹介・推広'] },
+                            { date: 'Sep. 2025 — Mar. 2026', org: '同済大学啓迪学院 学生自主管理委員会', role: '企画・組織部員', items: ['1 学期に 15 回以上のイベント（学術講演・文化活動・交流会）を企画・実施', '学院業務規程の改訂に参加；提案が採用され党・共青団建設に貢献'] }
+                        ],
+                        volunteer: [
+                            { date: 'Dec. 2025', title: '2025 年啓迪学院「双新」ガラ — チーフリード（CL）', desc: 'オンライン・オフラインの企画指導を提供；小道具・進行・会場の 3 班に参加', img: 'pics/启迪书院迎双新晚会.jpg' },
+                            { date: 'Nov. 2025', title: '「夕陽暖め・テクノロジーと愛」高齢者支援活動 — 実践班員', desc: '終日オフライン参加；公式 WeChat 記事の執筆・編集を担当', img: 'pics/智暖夕阳.jpg' },
+                            { date: 'Nov. 2025', title: '啓迪学院コミュニティサービス — 巡察員', desc: '四平路キャンパス SW-2 棟周辺を巡回し，マナー維持と学生支援を実施' },
+                            { date: 'Oct. 2025', title: '「蕙心纨質、愛と平和の守望」団支部建設訪問活動 — 参加者', desc: 'クラス団支部の文化建設訪問活動に参加。現地調査と資料収集を通じて「愛と平和」のテーマを深く掘り下げ，訪問報告をまとめ，団支部の特色ある文化建設に素材を提供し，深みと温もりのある団組織文化の形成に貢献した。', img: 'pics/蕙心纨质团支部建设寻访活动.jpg' },
+                            { date: 'Sep. 2025', title: '2025 年同済大学新入生歓迎ガラ — 会場管理班', desc: '会場維持・誘導・後方支援を担当', img: 'pics/同济大学迎新晚会合照.jpg' },
+                            { date: 'Jan. 2026', title: '2025–2026 年冬休み帰校宣講 — 優秀メンバー', desc: '宣講活動に参加し優秀メンバーとして表彰される' },
+                            { date: 'Apr. 2026', title: '第 1 回「縄技同済」啓迪学院縄跳びリーグ 予選 — 連絡班員', desc: '連絡調整と現場保障を担当し，大会の円滑な進行を確保' }
+                        ]
+                    } // end ja
+                }; // end i18n
+
+                // ===== 語言切換 =====
+                const currentLang = ref('zh');
+                const t = computed(() => i18n[currentLang.value]);
+                const setLang = (lang) => {
+                    const doSwitch = () => {
+                        currentLang.value = lang;
+                        document.documentElement.lang = lang;
+                        i18n[lang].nav.forEach((label, i) => { navLinks.value[i].label = label; });
+                    };
+                    if (document.startViewTransition) {
+                        document.startViewTransition(doSwitch);
+                    } else {
+                        doSwitch();
+                    }
+                };
+
+                // ===== 動的データ =====
+                const typedText = ref('');
+                const hitokoto = ref('');
+                const currentYear = computed(() => new Date().getFullYear());
+
+                // ===== 可见区域状态 =====
+                const visibleSections = reactive({
+                    about: false, education: false, skills: false,
+                    projects: false, 'student-work': false, awards: false, volunteer: false
+                });
+                const activeSection = ref('');
+                const scrollProgress = ref(0);
+
+                // ===== 打字效果 =====
+                const typeWriter = () => {
+                    const texts = ['尹梓骏 · Zijun Yin', 'Tongji 2552840'];
+                    let textIndex = 0, charIndex = 0, isDeleting = false;
+
+                    const type = () => {
+                        const current = texts[textIndex];
+                        typedText.value = isDeleting ? current.substring(0, --charIndex) : current.substring(0, ++charIndex);
+
+                        if (!isDeleting && charIndex === current.length) {
+                            setTimeout(type, 2000);
+                            isDeleting = true;
+                            return;
+                        }
+                        if (isDeleting && charIndex === 0) {
+                            isDeleting = false;
+                            textIndex = (textIndex + 1) % texts.length;
+                        }
+                        setTimeout(type, isDeleting ? 35 : 75);
+                    };
+                    type();
+                };
+
+                // ===== 粒子背景 =====
+                const initParticles = () => {
+                    const canvas = document.getElementById('particles');
+                    if (!canvas) return;
+                    const ctx = canvas.getContext('2d');
+                    let particles = [];
+                    let mouse = { x: null, y: null };
+
+                    const resize = () => {
+                        canvas.width = window.innerWidth;
+                        canvas.height = window.innerHeight;
+                    };
+                    resize();
+                    window.addEventListener('resize', resize);
+                    window.addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
+
+                    class Particle {
+                        constructor() {
+                            this.x = Math.random() * canvas.width;
+                            this.y = Math.random() * canvas.height;
+                            this.vx = (Math.random() - 0.5) * 0.6;
+                            this.vy = (Math.random() - 0.5) * 0.6;
+                            this.r = Math.random() * 2 + 1;
+                            this.color = Math.random() > 0.5 ? '37, 99, 235' : '124, 58, 237';
+                        }
+                        update() {
+                            this.x += this.vx;
+                            this.y += this.vy;
+                            if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+                            if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+                            if (mouse.x && mouse.y) {
+                                const dx = mouse.x - this.x, dy = mouse.y - this.y;
+                                const d = Math.sqrt(dx * dx + dy * dy);
+                                if (d < 150) { this.x -= dx * 0.01; this.y -= dy * 0.01; }
+                            }
+                        }
+                        draw() {
+                            ctx.beginPath();
+                            ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+                            ctx.fillStyle = `rgba(${this.color}, 0.8)`;
+                            ctx.shadowBlur = 10;
+                            ctx.shadowColor = `rgba(${this.color}, 0.5)`;
+                            ctx.fill();
+                            ctx.shadowBlur = 0;
+                        }
+                    }
+
+                    const init = () => {
+                        const count = Math.min(80, Math.floor(canvas.width * canvas.height / 15000));
+                        for (let i = 0; i < count; i++) particles.push(new Particle());
+                    };
+
+                    const animate = () => {
+                        ctx.clearRect(0, 0, canvas.width, canvas.height);
+                        particles.forEach(p => { p.update(); p.draw(); });
+                        for (let i = 0; i < particles.length; i++) {
+                            for (let j = i + 1; j < particles.length; j++) {
+                                const dx = particles[i].x - particles[j].x;
+                                const dy = particles[i].y - particles[j].y;
+                                const d = Math.sqrt(dx * dx + dy * dy);
+                                if (d < 120) {
+                                    const gradient = ctx.createLinearGradient(
+                                        particles[i].x, particles[i].y,
+                                        particles[j].x, particles[j].y
+                                    );
+                                    gradient.addColorStop(0, `rgba(${particles[i].color}, ${0.4 - d / 300})`);
+                                    gradient.addColorStop(1, `rgba(${particles[j].color}, ${0.4 - d / 300})`);
+                                    ctx.beginPath();
+                                    ctx.moveTo(particles[i].x, particles[i].y);
+                                    ctx.lineTo(particles[j].x, particles[j].y);
+                                    ctx.strokeStyle = gradient;
+                                    ctx.lineWidth = 0.8;
+                                    ctx.stroke();
+                                }
+                            }
+                        }
+                        requestAnimationFrame(animate);
+                    };
+                    init();
+                    animate();
+                };
+
+                // ===== 滚动监听 =====
+                const initScrollObserver = () => {
+                    const observer = new IntersectionObserver((entries) => {
+                        entries.forEach(entry => {
+                            const id = entry.target.id;
+                            if (id && visibleSections.hasOwnProperty(id)) {
+                                visibleSections[id] = entry.isIntersecting;
+                                if (entry.isIntersecting) activeSection.value = id;
+                            }
+                        });
+                    }, { threshold: 0.1 });
+
+                    document.querySelectorAll('.section').forEach(section => {
+                        observer.observe(section);
+                    });
+                };
+
+                // ===== 加载外部数据 =====
+                const loadExternalData = () => {
+                    hitokoto.value = '';
+                };
+                onMounted(() => {
+                    typeWriter();
+                    initParticles();
+                    initScrollObserver();
+                    loadExternalData();
+
+                    // Restore dark mode preference
+                    if (localStorage.getItem('theme') === 'dark') {
+                        isDark.value = true;
+                        document.documentElement.classList.add('dark');
+                    }
+
+                    window.addEventListener('scroll', () => {
+                        const el = document.documentElement;
+                        const scrolled = el.scrollTop || document.body.scrollTop;
+                        const total = el.scrollHeight - el.clientHeight;
+                        scrollProgress.value = total > 0 ? Math.round(scrolled / total * 1000) / 10 : 0;
+                        const g1 = document.querySelector('.geo-1');
+                        const g2 = document.querySelector('.geo-2');
+                        const g3 = document.querySelector('.geo-3');
+                        if (g1) g1.style.transform = `translateY(${scrolled * 0.12}px)`;
+                        if (g2) g2.style.transform = `translateY(${-scrolled * 0.08}px)`;
+                        if (g3) g3.style.transform = `translateY(${scrolled * 0.18}px) rotate(${scrolled * 0.02}deg)`;
+                    }, { passive: true });
+
+                    window.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
+
+                    // 标签页切换
+                    document.addEventListener('visibilitychange', () => {
+                        document.title = document.hidden ? '(๑•́ ₃•̀) 页面走丢了' : `尹梓骏 | Zijun Yin`;
+                    });
+
+                    console.log(`%c⚡ 尹梓骏 - Zijun Yin`, 'color:#2563eb;font-size:16px;font-weight:bold');
+
+                    const statsEl = document.querySelector('.hero-stats');
+                    if (statsEl) {
+                        const io = new IntersectionObserver((entries) => {
+                            if (entries[0].isIntersecting) {
+                                countUp(v => { statAwards.value = v; }, 10, 900);
+                                countUp(v => { statProjects.value = v; }, 7, 900);
+                                countUp(v => { statVolunteer.value = v; }, 60, 1100);
+                                io.disconnect();
+                            }
+                        }, { threshold: 0.5 });
+                        io.observe(statsEl);
+                    }
+                });
+
+                const expandedProjects = ref(new Set());
+                const toggleProject = (title) => {
+                    const s = new Set(expandedProjects.value);
+                    s.has(title) ? s.delete(title) : s.add(title);
+                    expandedProjects.value = s;
+                };
+                const awardTier = (tier) => ({ 'tier-gold': tier === 'gold', 'tier-silver': tier === 'silver' });
+                const awardIcon = (tier) => tier === 'gold' ? 'trophy-fill' : tier === 'silver' ? 'medal-fill' : 'award-fill';
+                const awardIconClass = (tier) => tier === 'gold' ? 'award-icon-gold' : tier === 'silver' ? 'award-icon-silver' : 'award-icon-accent';
+
+                const statAwards = ref(0);
+                const statProjects = ref(0);
+                const statVolunteer = ref(0);
+                const countUp = (setter, target, duration) => {
+                    const start = performance.now();
+                    const step = (now) => {
+                        const p = Math.min((now - start) / duration, 1);
+                        setter(Math.round(p * target));
+                        if (p < 1) requestAnimationFrame(step);
+                    };
+                    requestAnimationFrame(step);
+                };
+
+                const lightboxImg = ref('');
+                const lightboxAlt = ref('');
+                const openLightbox = (src, alt) => { lightboxImg.value = src; lightboxAlt.value = alt; };
+                const closeLightbox = () => { lightboxImg.value = ''; };
+
+                // Dark mode
+                const isDark = ref(false);
+                const toggleDark = () => {
+                    isDark.value = !isDark.value;
+                    document.documentElement.classList.toggle('dark', isDark.value);
+                    localStorage.setItem('theme', isDark.value ? 'dark' : 'light');
+                };
+
+                // Skill bar animation trigger
+                const skillsVisible = ref(false);
+                watch(() => visibleSections.skills, (v) => { if (v) skillsVisible.value = true; });
+
+                return {
+                    site, navLinks, socialLinks,
+                    currentLang, t, setLang,
+                    typedText, hitokoto, currentYear, visibleSections,
+                    expandedProjects, toggleProject,
+                    awardTier, awardIcon, awardIconClass,
+                    statAwards, statProjects, statVolunteer, countUp,
+                    activeSection, scrollProgress,
+                    lightboxImg, lightboxAlt, openLightbox, closeLightbox,
+                    isDark, toggleDark, skillsVisible
+                };
+            }
+        }).mount('#app');
+    </script>
+
+    <!-- Mouse Trail -->
+    <canvas id="trail-canvas" style="position:fixed;top:0;left:0;pointer-events:none;z-index:9999;width:100%;height:100%;"></canvas>
+    <script>
+    (function() {
+        const canvas = document.getElementById('trail-canvas');
+        const ctx = canvas.getContext('2d');
+        let W, H;
+        function resize() {
+            W = canvas.width = window.innerWidth;
+            H = canvas.height = window.innerHeight;
+        }
+        resize();
+        window.addEventListener('resize', resize);
+
+        const TRAIL_LEN = 28;
+        const pts = [];
+        let mx = -999, my = -999;
+
+        window.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+
+        // hue cycles slowly with time
+        let hue = 220;
+
+        function lerp(a, b, t) { return a + (b - a) * t; }
+
+        function tick() {
+            requestAnimationFrame(tick);
+
+            // fade canvas each frame
+            ctx.globalCompositeOperation = 'destination-out';
+            ctx.fillStyle = 'rgba(0,0,0,0.18)';
+            ctx.fillRect(0, 0, W, H);
+            ctx.globalCompositeOperation = 'source-over';
+
+            // push new point
+            pts.push({ x: mx, y: my, age: 0 });
+            if (pts.length > TRAIL_LEN) pts.shift();
+
+            hue = (hue + 0.4) % 360;
+
+            if (pts.length < 2) return;
+
+            // draw smooth bezier ribbon
+            for (let i = 1; i < pts.length; i++) {
+                const t = i / pts.length;            // 0→1 tail→head
+                const alpha = t * t * 0.85;
+                const radius = t * 7 + 1;
+                const h = (hue + i * 3.5) % 360;
+
+                ctx.beginPath();
+                if (i === 1) {
+                    ctx.moveTo(pts[0].x, pts[0].y);
+                } else {
+                    const mx0 = (pts[i-1].x + pts[i].x) / 2;
+                    const my0 = (pts[i-1].y + pts[i].y) / 2;
+                    ctx.moveTo((pts[i-2].x + pts[i-1].x) / 2, (pts[i-2].y + pts[i-1].y) / 2);
+                    ctx.quadraticCurveTo(pts[i-1].x, pts[i-1].y, mx0, my0);
+                }
+
+                ctx.strokeStyle = `hsla(${h},90%,68%,${alpha})`;
+                ctx.lineWidth = radius * 2;
+                ctx.lineCap = 'round';
+                ctx.lineJoin = 'round';
+                ctx.stroke();
+
+                // glow core
+                ctx.beginPath();
+                ctx.arc(pts[i].x, pts[i].y, radius * 0.55, 0, Math.PI * 2);
+                ctx.fillStyle = `hsla(${h},100%,82%,${alpha * 0.7})`;
+                ctx.fill();
+            }
+
+            // sparkle at cursor tip
+            if (pts.length > 1) {
+                const tip = pts[pts.length - 1];
+                ctx.beginPath();
+                ctx.arc(tip.x, tip.y, 5, 0, Math.PI * 2);
+                const g = ctx.createRadialGradient(tip.x, tip.y, 0, tip.x, tip.y, 9);
+                g.addColorStop(0, `hsla(${hue},100%,90%,0.9)`);
+                g.addColorStop(1, `hsla(${hue},100%,70%,0)`);
+                ctx.fillStyle = g;
+                ctx.fill();
+            }
+        }
+        tick();
+    })();
+    </script>
+</body>
+
+</html>
