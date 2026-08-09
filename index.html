@@ -199,6 +199,32 @@
                     </div>
                 </section>
 
+                <!-- Publications -->
+                <section id="publications" class="section" :class="{ visible: visibleSections.publications }">
+                    <div class="section-header" data-label="PUBLICATIONS">
+                        <i class="ri-article-line"></i>
+                        <h2>{{ t.sections.publications }}</h2>
+                        <span class="section-line"></span>
+                    </div>
+                    <div class="awards-feed">
+                        <div v-for="(pub, index) in t.publications" :key="index" class="award-card award-gold">
+                            <div v-if="pub.ribbon" class="project-ribbon">{{ pub.ribbon }}</div>
+                            <div style="display:flex;align-items:center;gap:0.55rem;margin-bottom:0.45rem;">
+                                <i class="ri-article-line" style="font-size:1.1rem;flex-shrink:0;color:var(--accent);"></i>
+                                <span class="award-date">{{ pub.date }}</span>
+                            </div>
+                            <h3>{{ pub.title }}</h3>
+                            <p class="timeline-company" style="margin:0.2rem 0 0.4rem;">{{ pub.authors }}</p>
+                            <p v-if="pub.venue" style="font-size:0.82rem;color:var(--text-muted);margin-bottom:0.5rem;">{{ pub.venue }}</p>
+                            <p v-if="pub.desc">{{ pub.desc }}</p>
+                            <div v-if="pub.img" class="card-thumb" @click="openLightbox(pub.img, pub.title)">
+                                <img :src="pub.img" :alt="pub.title" loading="lazy">
+                                <div class="card-thumb-zoom"><i class="ri-zoom-in-line"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
                 <!-- Awards -->
                 <section id="awards" class="section" :class="{ visible: visibleSections.awards }">
                     <div class="section-header" data-label="AWARDS">
@@ -327,8 +353,9 @@
                     { id: 'about',        label: 'About' },
                     { id: 'education',    label: 'Education' },
                     { id: 'skills',       label: 'Skills' },
-                    { id: 'projects',     label: 'Research' },
-                    { id: 'student-work', label: 'Activities' },
+                    { id: 'projects',      label: 'Research' },
+                    { id: 'publications',  label: 'Publications' },
+                    { id: 'student-work',  label: 'Activities' },
                     { id: 'awards',       label: 'Awards' },
                     { id: 'volunteer',    label: 'Volunteer' },
                     { id: 'contact',      label: 'Contact' }
@@ -359,10 +386,10 @@
                         quote: '世界很吵，我需要安静一会儿。',
                         sections: {
                             about: 'About Me', education: 'Education', skills: 'Skills',
-                            projects: 'Research & Projects', awards: 'Awards & Honors',
+                            projects: 'Research & Projects', publications: '学术成果', awards: 'Awards & Honors',
                             activities: 'Student Activities', volunteer: 'Volunteer Work'
                         },
-                        nav: ['About','Education','Skills','Research','Activities','Awards','Volunteer','Contact'],
+                        nav: ['关于我','教育经历','专业技能','科研项目','学术成果','学生活动','荣誉奖励','志愿工作','联系方式'],
                         aboutIntro: '同济大学启迪书院 2025 级学生，兴趣横跨机器学习、遥感数据分析、数学建模与网络安全，热衷于用代码和模型解决真实世界的复杂问题。课余喜欢跑步出汗、临帖练字，或是戴上耳机在音乐里发呆。',
                         aboutCards: [
                             { icon: 'ri-brain-line', title: '机器学习', desc: 'Python, TensorFlow, Scikit-learn；擅长构建预测模型与特征工程' },
@@ -384,6 +411,8 @@
                             { category: '其他外语', icon: 'ri-global-line', items: ['法语 B1（线上测试）', '日语 N3（线上测试）'] }
                         ],
                         awards: [
+                            { date: 'Aug. 2026', ribbon: '优秀报告', title: '第九届贯通教育背景下的大中物理教育衔接与创新教育研讨培训会 — 优秀报告奖', desc: '于中国·保定就论文《基于AI的大学物理电磁学交互式仿真实验平台设计》作口头报告，为会议中唯一在场作报告的本科生；荣获优秀报告奖，获颁报告证书与40学时培训证书', tier: 'gold', img: 'pics/学术成果1：保定会议报告.jpg' },
+                            { date: 'Aug. 2026', ribbon: '40学时', title: '第九届贯通教育背景下的大中物理教育衔接与创新教育研讨培训会 — 40学时培训证书', desc: '参加全国性物理教育研讨培训会并获颁40学时培训证书', tier: '', img: 'pics/荣誉奖励：保定会议40学时.jpg' },
                             { date: 'Jun. 2026', ribbon: 'MIT', title: 'NEOSCHOLAR 国际化拔尖创新人才培养计划 — 二阶段入围', desc: '通过递交申请材料并与 MIT Prof. Gunther Roland 沟通，成功入围跨国课题组，在导师指导下独立完成课题科研任务；组内综合成绩第一', tier: 'gold', img: 'pics/NEOSCHOLAR二阶段入围.jpg' },
                             { date: 'May 2026', ribbon: 'NEOSCHOLAR', title: 'NEOSCHOLAR 国际化拔尖创新人才培养计划 — 综合成绩 94.70 分', desc: '组内综合成绩 94.70 分（满分 100 分），位居组内第一', tier: 'gold', img: 'pics/NEOSCHOLAR.png' },
                             { date: 'May 2026', ribbon: '国家二等', title: '第十一届数维杯全国大学生数学建模挑战赛（春季赛）— 国家二等奖', desc: '', tier: 'silver', img: 'pics/SHUWEI.png' },
@@ -408,6 +437,9 @@
                             { icon: 'ri-flask-line', img: 'pics/基于机器学习的多种纳豆成分分析与功效预测.png', ribbon: '独作', title: '基于机器学习的多种纳豆成分分析与功效预测', desc: '基于机器学习方法系统分析 10 种纳豆品种中的生物活性成分，定量检测纳豆激酶、γ-氨基丁酸、总黄酮等关键功能化合物，结合统计分析与关联规则挖掘揭示成分与健康功效的内在关联，构建基于成分谱的效能预测模型，实现功能活性快速评估与品质分级。独立完成全部工作。', tags: ['Machine Learning', 'Data Analysis', '独作', 'Feb–Apr 2026'], metrics: [{ value: '10 种', label: '纳豆品种' }, { value: '独作', label: '完成形式' }] },
                             { icon: 'ri-microscope-line', img: 'pics/基因组规模代谢模型整合靶向代谢组学揭示纳豆发酵食品安全风险根源与氨基酸强化靶标.png', ribbon: 'GitHub', title: '基因组规模代谢模型整合靶向代谢组学揭示纳豆发酵食品安全风险根源与氨基酸强化靶标', desc: '首次将枯草芽孢杆菌全基因组代谢模型（iBsu1103）与纳豆靶向 LC-MS/MS 代谢组学数据系统整合，通过两级名称匹配将 76 种显著差异代谢物（映射率 47.2%）锚定至模型节点并施加分泌/摄取方向性约束，构建约束通量平衡分析（cFBA）框架。综合运用通量变异性分析（FVA）、单基因敲除筛选、FSEOF 工程靶标预测与 KEGG 通路富集，系统解析纳豆发酵代谢代价与食品安全风险机制。框架成功复现纳豆固态发酵生长代价（生物量下降 7.6%），揭示乙酰乳酸溢流代谢为最显著网络重塑事件（通量激增 −742 mmol·gDW⁻¹·h⁻¹），经 BEST195 基因组分析锁定候选芳香族脱羧酶基因，并鉴定 28 个纳豆特异性必需基因；多目标 FSEOF 预测 ptsG 敲除与甲酸盐转运体过表达为 L-组氨酸强化最优双靶标，转录组交叉验证一致率 62%。独立完成，代码数据已在 GitHub 公开。', tags: ['Metabolic Modeling', 'cFBA', 'Bioinformatics', 'LC-MS/MS', '独作', 'Apr–Jun 2026'], metrics: [{ value: '28个', label: '必需基因' }, { value: '62%', label: '转录组验证' }, { value: 'GitHub', label: '代码公开' }] },
                             { icon: 'ri-water-flash-line', img: 'pics/活水化瘀：城市供水生命线快速智能血检诊疗.png', ribbon: 'X-lab', title: '活"水"化瘀：城市供水生命线快速智能"血检"诊疗', desc: '针对城市供水管网腐蚀结垢、漏损与末梢水质波动等痛点，借鉴医学"血检"理念采集上下游水质变化数据，结合真实管段腐蚀量化评分体系与多元非线性回归模型反演管道健康状态；引入 YOLOv7 图像识别技术自动识别内窥照片腐蚀区域（准确率 81%，区域完整度 73%）。构建"多源感知—健康评价—风险预警—精准处置"闭环体系，无需开挖即可通过移动式采样工作站完成管网大面积初筛，成本较传统内窥镜检测降低 95% 以上。已在上海城市更新行动中应用 23 次，覆盖管道 340 km，采集水质数据 1500+ 条，诊断准确率超 83.3%；在首届 X-lab 科创文化日独立获得 400 万虚拟投资。', tags: ['YOLOv7', 'Image Recognition', 'Smart City', 'Apr–Jun 2026'], metrics: [{ value: '340 km', label: '覆盖管道' }, { value: '83.3%+', label: '诊断准确率' }, { value: '400万', label: 'X-lab 虚拟投资' }] }
+                        ],
+                        publications: [
+                            { ribbon: '会议报告', date: 'Aug. 2026', title: '基于AI的大学物理电磁学交互式仿真实验平台设计', authors: '尹梓骏（第一作者）；张睿†（通讯作者，副教授）；王俊博；徐帆', venue: '第九届贯通教育背景下的大中物理教育衔接与创新教育研讨培训会，中国·保定', desc: '针对大学物理电磁学教学中概念抽象的痛点，设计并实现基于AI的HTML5交互式仿真平台，覆盖22个仿真实验及22个配套理论笔记页，支持离线运行。以场强热图结合脏标记缓存与离屏双缓冲，将热图重算耗时从约200 ms压缩至5 ms以内（约40倍加速）；笔记模块集成66题课后自测、76处探究引导与AI五步式报告向导。问卷调查（n=31）显示93.5%学生认为平台有助于理解抽象电磁概念；对照实验中实验组平均相对提升率（12.22%）高于对照组（7.78%）。于会议上作口头报告，为场内唯一本科生报告人，荣获优秀报告奖，获颁报告证书与40学时培训证书。', img: 'pics/学术成果1：保定会议报告.jpg' }
                         ],
                         studentWork: [
                             { date: 'Jun. 2026 — 至今', org: '同济大学启迪书院共产主义青年团委员会', role: '组织部副部长', img: 'pics/组织部副部长.jpg', items: ['策划并参与同济大学启迪书院第一次学生代表大会，全程负责组织协调', '负责启迪书院入党培养方案的修订与指标"启迪星"的统计工作', '成为入党积极分子，积极加强自身理论学习，持续组织策划并参与党团活动'] },
@@ -436,8 +468,8 @@
                         collapse: 'Show less ▴',
                         viewCert: 'View certificate',
                         quote: 'The world is loud. I just need a moment of quiet.',
-                        sections: { about: 'About Me', education: 'Education', skills: 'Skills', projects: 'Research & Projects', awards: 'Awards & Honors', activities: 'Student Activities', volunteer: 'Volunteer Work' },
-                        nav: ['About','Education','Skills','Research','Activities','Awards','Volunteer','Contact'],
+                        sections: { about: 'About Me', education: 'Education', skills: 'Skills', projects: 'Research & Projects', publications: 'Publications', awards: 'Awards & Honors', activities: 'Student Activities', volunteer: 'Volunteer Work' },
+                        nav: ['About','Education','Skills','Research','Publications','Activities','Awards','Volunteer','Contact'],
                         aboutIntro: 'Freshman at Tongji University\'s Qidi College (Class of 2025), with interests spanning machine learning, remote sensing data analysis, mathematical modeling, and cybersecurity. Passionate about solving real-world problems with code and models. In my spare time I enjoy running, practicing calligraphy, and losing myself in music.',
                         aboutCards: [
                             { icon: 'ri-brain-line', title: 'Machine Learning', desc: 'Python, TensorFlow, Scikit-learn; skilled in predictive modeling and feature engineering' },
@@ -467,7 +499,11 @@
                             { icon: 'ri-microscope-line', img: 'pics/基因组规模代谢模型整合靶向代谢组学揭示纳豆发酵食品安全风险根源与氨基酸强化靶标.png', ribbon: 'GitHub', title: 'Genome-Scale Metabolic Modeling Reveals Natto Fermentation Safety Risks & Amino Acid Enhancement Targets', desc: 'First integration of B. subtilis genome-scale model (iBsu1103) with targeted LC-MS/MS metabolomics data; anchored 76 differential metabolites (47.2% mapping rate) with directional constraints into a cFBA framework. Identified 28 natto-specific essential genes; multi-target FSEOF predicted ptsG knockout + formate transporter overexpression as optimal dual targets for L-histidine enhancement (62% transcriptome cross-validation consistency). Code and data publicly available on GitHub.', tags: ['Metabolic Modeling', 'cFBA', 'Bioinformatics', 'LC-MS/MS', 'Solo', 'Apr–Jun 2026'], metrics: [{ value: '28 genes', label: 'Essential genes' }, { value: '62%', label: 'Cross-validation' }, { value: 'GitHub', label: 'Open source' }] },
                             { icon: 'ri-water-flash-line', img: 'pics/活水化瘀：城市供水生命线快速智能血检诊疗.png', ribbon: 'X-lab', title: 'Smart "Blood Test" Diagnostic System for Urban Water Supply Networks', desc: 'Inspired by medical blood testing, collected upstream/downstream water quality data, combined quantitative corrosion scoring and nonlinear regression to infer pipe health; integrated YOLOv7 endoscopy image recognition (81% accuracy, 73% region completeness). Built closed-loop "multi-source sensing – health assessment – risk alert – precise response" system, reducing cost by 95%+ vs. traditional endoscopy. Applied 23 times in Shanghai urban renewal, covering 340 km of pipes, 1,500+ water quality records, >83.3% diagnostic accuracy. Won ¥4M virtual investment at Qidi X-lab Innovation Day.', tags: ['YOLOv7', 'Image Recognition', 'Smart City', 'Apr–Jun 2026'], metrics: [{ value: '340 km', label: 'Pipes covered' }, { value: '83.3%+', label: 'Accuracy' }, { value: '¥4M virtual', label: 'X-lab investment' }] }
                         ],
+                        publications: [
+                            { ribbon: 'Conference', date: 'Aug. 2026', title: 'Design of an AI-Based Interactive Simulation Platform for Electromagnetics in University Physics', authors: 'YIN Zijun (1st author); ZHANG Rui† (Corresponding, Associate Prof.); WANG Junbo; XU Fan', venue: '9th Symposium on Physics Education Articulation and Innovation in the Context of Coherent Education, Baoding, China', desc: 'Designed and implemented, based on AI, an HTML5 interactive simulation platform covering 22 electromagnetics experiments and 22 theory-note pages, with offline support. A field-intensity heatmap with dirty-flag caching and off-screen double buffering reduced recomputation from ~200 ms to <5 ms (~40× speedup). The note module integrates 66 after-class self-test questions, 76 inquiry-guidance panels, and a five-step AI report wizard. Survey (n=31): 93.5% of students found the platform helpful; controlled experiment: experimental group mean relative gain 12.22% vs. 7.78% (control). Delivered oral presentation at the conference as the only undergraduate presenter; awarded Outstanding Presentation; received Presentation Certificate and 40-credit-hour Training Certificate.', img: 'pics/学术成果1：保定会议报告.jpg' }
+                        ],
                         awards: [
+                            { date: 'Aug. 2026', ribbon: 'Outstanding', title: '9th Symposium on Physics Education Articulation (Baoding) — Outstanding Presentation Award', desc: 'Only undergraduate presenter at the conference; also received Presentation Certificate and 40-credit-hour Training Certificate', tier: 'gold', img: 'pics/荣誉奖励：保定会议40学时.jpg' },
                             { date: 'Jun. 2026', ribbon: 'MIT', title: 'NEOSCHOLAR International Elite Innovation Program — Stage 2 Selection', desc: 'Selected into MIT Prof. Gunther Roland\'s international research group after submitting application materials; independently completed research tasks under his supervision; ranked 1st in the group overall', tier: 'gold', img: 'pics/NEOSCHOLAR二阶段入围.jpg' },
                             { date: 'May 2026', ribbon: 'NEOSCHOLAR', title: 'NEOSCHOLAR International Elite Innovation Program — Overall Score 94.70', desc: 'Scored 94.70/100 overall, ranked 1st in the group', tier: 'gold', img: 'pics/NEOSCHOLAR.png' },
                             { date: 'May 2026', ribbon: 'Nat\'l 2nd', title: '11th ShuWei Cup National Mathematical Modeling Challenge (Spring) — National 2nd Prize', desc: '', tier: 'silver', img: 'pics/SHUWEI.png' },
@@ -511,8 +547,8 @@
                         collapse: '折りたたむ ▴',
                         viewCert: '証明書を見る',
                         quote: '世界は騒がしい。少し静かにしていたい。',
-                        sections: { about: '自己紹介', education: '学歴', skills: 'スキル', projects: '研究・プロジェクト', awards: '受賞・栄誉', activities: '学生活動', volunteer: 'ボランティア' },
-                        nav: ['自己紹介','学歴','スキル','研究','活動','受賞','ボランティア','連絡先'],
+                        sections: { about: '自己紹介', education: '学歴', skills: 'スキル', projects: '研究・プロジェクト', publications: '論文・発表', awards: '受賞・栄誉', activities: '学生活動', volunteer: 'ボランティア' },
+                        nav: ['自己紹介','学歴','スキル','研究','論文','活動','受賞','ボランティア','連絡先'],
                         aboutIntro: '同済大学啓迪学院 2025 年度入学。機械学習・リモートセンシングデータ解析・数理モデリング・サイバーセキュリティに興味を持ち、コードとモデルで現実の問題を解くことに情熱を注いでいます。余暇はランニング、書道の練習、または音楽に没頭する時間を楽しんでいます。',
                         aboutCards: [
                             { icon: 'ri-brain-line', title: '機械学習', desc: 'Python, TensorFlow, Scikit-learn；予測モデル構築と特徴量エンジニアリングを得意とする' },
@@ -542,7 +578,11 @@
                             { icon: 'ri-microscope-line', img: 'pics/基因组规模代谢模型整合靶向代谢组学揭示纳豆发酵食品安全风险根源与氨基酸强化靶标.png', ribbon: 'GitHub', title: 'ゲノムスケール代謝モデル×標的メタボロミクスによる納豆発酵の食品安全リスク解析', desc: 'B. subtilis ゲノムスケール代謝モデル（iBsu1103）と LC-MS/MS メタボロミクスデータを初めて統合し，76 種の差異代謝物（マッピング率 47.2%）を cFBA フレームワークに組み込む。28 個の納豆特異的必須遺伝子を同定；多目的 FSEOF で ptsG ノックアウト＋ギ酸輸送体過剰発現を L-ヒスチジン強化の最適二重標的として予測（転写組交差検証一致率 62%）。コード・データは GitHub 公開。', tags: ['代謝モデリング', 'cFBA', 'バイオインフォマティクス', 'LC-MS/MS', '単著', '2026年4–6月'], metrics: [{ value: '28 遺伝子', label: '必須遺伝子' }, { value: '62%', label: '交差検証' }, { value: 'GitHub', label: 'オープンソース' }] },
                             { icon: 'ri-water-flash-line', img: 'pics/活水化瘀：城市供水生命线快速智能血检诊疗.png', ribbon: 'X-lab', title: '都市水道ネットワーク向けスマート「血液検査」診断システム', desc: '医学の血液検査を参考に，上下流の水質データを収集し，非線形回帰モデルで管路健全状態を推定。YOLOv7 による内視鏡画像の腐食領域認識（精度 81%，完整度 73%）を組み合わせ，従来の内視鏡検査比コスト 95% 削減。上海市都市更新行動で 23 回適用，対象管路 340 km，水質データ 1,500 件以上，診断精度 83.3% 超。第 1 回 X-lab イノベーションデーで仮想投資 400 万元獲得。', tags: ['YOLOv7', '画像認識', 'スマートシティ', '2026年4–6月'], metrics: [{ value: '340 km', label: '対象管路' }, { value: '83.3%+', label: '診断精度' }, { value: '400万元', label: 'X-lab 仮想投資' }] }
                         ],
+                        publications: [
+                            { ribbon: '学術発表', date: 'Aug. 2026', title: 'AI を活用した大学物理電磁学インタラクティブシミュレーションプラットフォームの設計', authors: '尹梓骏（第一著者）；張睿†（通信著者・准教授）；王俊博；徐帆', venue: '第 9 回貫通教育背景下の大中物理教育衔接・創新教育研討培訓会（中国・保定）', desc: 'HTML5 によるインタラクティブシミュレーションプラットフォームを設計・実装。22 個のシミュレーション実験と 22 ページの理論ノートを収録，オフライン動作対応。場強度ヒートマップにダーティフラグキャッシュとオフスクリーンダブルバッファを導入し，再計算時間を約 200 ms から 5 ms 以内（約 40 倍高速化）に短縮。ノートモジュールに 66 問の自己テスト・76 箇所の探究ガイドパネル・AI 五段階レポートウィザードを統合。アンケート（n=31）：93.5% の学生が概念理解に有効と回答。実験群の平均相対向上率 12.22%（対照群 7.78%）。会議唯一の学部生発表者として口頭発表し，優秀報告賞を受賞；発表証明書・40 学時研修証明書を取得。', img: 'pics/学術成果1：保定会議報告.jpg' }
+                        ],
                         awards: [
+                            { date: 'Aug. 2026', ribbon: '優秀報告', title: '第 9 回貫通教育研討培訓会（保定）— 優秀報告賞', desc: '会議唯一の学部生発表者；発表証明書・40 学時研修証明書も取得', tier: 'gold', img: 'pics/荣誉奖励：保定会议40学时.jpg' },
                             { date: 'Jun. 2026', ribbon: 'MIT', title: 'NEOSCHOLAR 国際エリート革新人材育成プログラム — 第 2 段階入選', desc: '申請書類を提出し MIT 教授 Gunther Roland とのやり取りを経て国際研究グループに入選；指導のもと研究課題を単独で完成；グループ内総合成績第 1 位', tier: 'gold', img: 'pics/NEOSCHOLAR二阶段入围.jpg' },
                             { date: 'May 2026', ribbon: 'NEOSCHOLAR', title: 'NEOSCHOLAR 国際エリート革新人材育成プログラム — 総合スコア 94.70 点', desc: 'グループ内総合成績 94.70 点（100 点満点）、第 1 位', tier: 'gold', img: 'pics/NEOSCHOLAR.png' },
                             { date: 'May 2026', ribbon: '全国', title: '全国大学生英語語彙能力コンテスト（"詞達人杯"）', desc: '校内試験 上位 15%', tier: '', img: 'pics/词达人.jpg' },
@@ -601,7 +641,7 @@
                 // ===== 可见区域状态 =====
                 const visibleSections = reactive({
                     about: false, education: false, skills: false,
-                    projects: false, 'student-work': false, awards: false, volunteer: false
+                    projects: false, publications: false, 'student-work': false, awards: false, volunteer: false
                 });
                 const activeSection = ref('');
                 const scrollProgress = ref(0);
