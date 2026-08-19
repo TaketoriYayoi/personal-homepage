@@ -427,6 +427,8 @@
                             { date: 'Oct. 2025', ribbon: '同济二等', title: 'CatCTF 同济大学网络安全大赛 — 二等奖', desc: '', tier: 'silver', img: 'pics/CatCTF网络安全新生赛.jpg' },
                             { date: 'Sep. 2025', ribbon: '媒体报道', title: '光明日报《教育家》杂志 2025 年 9 月刊第四期', desc: '受采访并发表《一次先修课的"疗愈记"》', tier: '', img: 'pics/教育家杂志.png' },
                             { date: 'Sep. 2025', ribbon: '优秀志愿', title: '同济大学迎新晚会 — 优秀志愿者', desc: '"济艺星火耀新程"2025年同济大学艺术节开幕式暨迎新生文艺晚会，志愿服务表现优异', tier: '', img: 'pics/同济大学迎新晚会优秀志愿者.jpg' },
+                            { date: 'Aug. 2026', ribbon: '华为云·高级', title: '基于AscendC开发大模型加速算子微认证', desc: '华为云高级微认证，深度学习/算子编写与调用方向；全面掌握 Ascend C 算子开发与调用流程，独立完成算子核函数开发、Tiling 开发及单算子/网络中算子调用', tier: 'silver', img: 'pics/基于AscendC开发大模型加速算子微认证.png' },
+                            { date: 'Aug. 2026', ribbon: '华为云', title: '人工智能初识微认证', desc: '华为云微认证，人工智能基础方向；了解人工智能发展趋势、基本概念及大模型应用，掌握大模型、Agent 等工具的原理与工作流', tier: '', img: 'pics/人工智能初识微认证.png' },
                             { date: 'Jun. 2025', ribbon: '646分', title: '大学英语四级（CET-4）— 646/710', desc: '', tier: '', img: 'pics/四级成绩单.jpg' }
                         ],
                         projects: [
@@ -522,6 +524,8 @@
                             { date: 'Oct. 2025', ribbon: '2nd Prize', title: 'CatCTF Tongji University Cybersecurity Contest — 2nd Prize', desc: '', tier: 'silver', img: 'pics/CatCTF网络安全新生赛.jpg' },
                             { date: 'Sep. 2025', ribbon: 'Press', title: 'Guangming Daily "Educator" Magazine, Sep. 2025, Issue 4', desc: 'Interviewed; published essay "A Precourse Healing Journey"', tier: '', img: 'pics/教育家杂志.png' },
                             { date: 'Sep. 2025', ribbon: 'Volunteer', title: 'Tongji University Welcome Gala — Outstanding Volunteer', desc: 'Recognized for outstanding volunteer service at the "Jiyi Xinghuo Yao Xincheng" 2025 Tongji University Arts Festival Opening Ceremony & Freshman Gala', tier: '', img: 'pics/同济大学迎新晚会优秀志愿者.jpg' },
+                            { date: 'Aug. 2026', ribbon: 'Huawei·Advanced', title: 'Micro-Certification: Large Model Acceleration Operator Development via AscendC', desc: 'Advanced Huawei Cloud micro-certification in deep learning / operator development; covers Ascend C operator development workflow, kernel function development, Tiling, and single/network-level operator invocation', tier: 'silver', img: 'pics/基于AscendC开发大模型加速算子微认证.png' },
+                            { date: 'Aug. 2026', ribbon: 'Huawei', title: 'Micro-Certification: Introduction to Artificial Intelligence', desc: 'Huawei Cloud micro-certification covering AI development trends, fundamental concepts, and large model applications including LLM / Agent workflows', tier: '', img: 'pics/人工智能初识微认证.png' },
                             { date: 'Jun. 2025', ribbon: '646/710', title: 'CET-4 (College English Test Band 4) — 646/710', desc: '', tier: '', img: 'pics/四级成绩单.jpg' }
                         ],
                         studentWork: [
@@ -603,6 +607,8 @@
                             { date: 'Oct. 2025', ribbon: '2等賞', title: 'CatCTF 同済大学サイバーセキュリティコンテスト — 2 等賞', desc: '', tier: 'silver', img: 'pics/CatCTF网络安全新生赛.jpg' },
                             { date: 'Sep. 2025', ribbon: 'メディア', title: '光明日報「教育家」誌 2025 年 9 月号第 4 期', desc: 'インタビューを受け「プレ授業の癒し記」を掲載', tier: '', img: 'pics/教育家杂志.png' },
                             { date: 'Sep. 2025', ribbon: '優秀', title: '同済大学迎新晩会 — 優秀ボランティア', desc: '「済芸星火耀新程」2025年同済大学芸術祭開幕式・新入生文芸晩会にてボランティアとして参加，優秀な活躍が認められ表彰', tier: '', img: 'pics/同济大学迎新晚会优秀志愿者.jpg' },
+                            { date: 'Aug. 2026', ribbon: '華為·上級', title: 'マイクロ認定：AscendC を用いた大規模モデル加速演算子開発', desc: '深層学習・演算子開発分野の上級華為クラウドマイクロ認定；Ascend C 演算子開発フロー・カーネル関数・Tiling・単体/ネットワーク演算子呼び出しを習得', tier: 'silver', img: 'pics/基于AscendC开发大模型加速算子微认证.png' },
+                            { date: 'Aug. 2026', ribbon: '華為', title: 'マイクロ認定：人工知能入門', desc: 'AI の発展動向・基本概念・大規模モデル（LLM / Agent ワークフロー）を網羅した華為クラウドマイクロ認定', tier: '', img: 'pics/人工智能初识微认证.png' },
                             { date: 'Jun. 2025', ribbon: '646点', title: '大学英語四級（CET-4）— 646/710', desc: '', tier: '', img: 'pics/四级成绩单.jpg' }
                         ],
                         studentWork: [
@@ -816,7 +822,7 @@
                     if (statsEl) {
                         const io = new IntersectionObserver((entries) => {
                             if (entries[0].isIntersecting) {
-                                countUp(v => { statAwards.value = v; }, 10, 900);
+                                countUp(v => { statAwards.value = v; }, 12, 900);
                                 countUp(v => { statProjects.value = v; }, 7, 900);
                                 countUp(v => { statVolunteer.value = v; }, 60, 1100);
                                 io.disconnect();
